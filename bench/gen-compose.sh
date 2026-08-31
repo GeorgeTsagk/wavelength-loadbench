@@ -169,6 +169,9 @@ services:
       - --bitcoind.host=wb-bitcoind:18443
       - --bitcoind.user=devuser
       - --bitcoind.pass=devpass
+      # v2: defaults are 200k/200k, too small for the 2M-per-client funding.
+      - --rounds.maxvtxoamount=4000000
+      - --rounds.maxuserbalance=8000000
       - --metrics.listen=0.0.0.0:9090
 EOF
 for f in $PROFILE_FLAGS; do echo "      - $f"; done

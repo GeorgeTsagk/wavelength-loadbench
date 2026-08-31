@@ -24,7 +24,7 @@ services:
       - -zmqpubrawblock=tcp://0.0.0.0:28332
       - -zmqpubrawtx=tcp://0.0.0.0:28333
     ports:
-      - "19443:18443"
+      - "127.0.0.1:19443:18443"
     volumes:
       # This image's entrypoint runs bitcoind with -datadir=/home/bitcoin/.bitcoin
       # (BITCOIN_DATA); mounting anywhere else leaves electrs reading an empty dir.
@@ -57,7 +57,7 @@ services:
       - --daemon-dir=/home/user/.bitcoin
       - --db-dir=/electrs-db
     ports:
-      - "13002:3002"
+      - "127.0.0.1:13002:3002"
     volumes:
       - wb-bitcoind-data:/home/user/.bitcoin:ro
       - wb-electrs-data:/electrs-db
@@ -88,7 +88,7 @@ services:
       - --tlsextradomain=wb-lnd
       - --debuglevel=info
     ports:
-      - "11009:10009"
+      - "127.0.0.1:11009:10009"
     volumes:
       - wb-lnd-data:/root/.lnd
     networks: [wavebench]
@@ -115,7 +115,7 @@ services:
       POSTGRES_PASSWORD: lightning
       POSTGRES_DB: lumos
     ports:
-      - "15432:5432"
+      - "127.0.0.1:15432:5432"
     volumes:
       - wb-pg-data:/var/lib/postgresql/data
     networks: [wavebench]
@@ -160,10 +160,10 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "17070:7070"
-      - "18085:8081"
-      - "16060:6060"
-      - "19090:9090"
+      - "127.0.0.1:17070:7070"
+      - "127.0.0.1:18085:8081"
+      - "127.0.0.1:16060:6060"
+      - "127.0.0.1:19090:9090"
     volumes:
       - wb-lnd-data:/lnd:ro
       - wb-lumosd-data:/root/.lumosd
@@ -199,9 +199,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20001:10029"
-      - "16101:6060"
-      - "19001:9090"
+      - "127.0.0.1:20001:10029"
+      - "127.0.0.1:16101:6060"
+      - "127.0.0.1:19001:9090"
     volumes:
       - wb-client01-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro
@@ -233,9 +233,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20002:10029"
-      - "16102:6060"
-      - "19002:9090"
+      - "127.0.0.1:20002:10029"
+      - "127.0.0.1:16102:6060"
+      - "127.0.0.1:19002:9090"
     volumes:
       - wb-client02-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro
@@ -267,9 +267,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20003:10029"
-      - "16103:6060"
-      - "19003:9090"
+      - "127.0.0.1:20003:10029"
+      - "127.0.0.1:16103:6060"
+      - "127.0.0.1:19003:9090"
     volumes:
       - wb-client03-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro
@@ -301,9 +301,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20004:10029"
-      - "16104:6060"
-      - "19004:9090"
+      - "127.0.0.1:20004:10029"
+      - "127.0.0.1:16104:6060"
+      - "127.0.0.1:19004:9090"
     volumes:
       - wb-client04-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro
@@ -335,9 +335,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20005:10029"
-      - "16105:6060"
-      - "19005:9090"
+      - "127.0.0.1:20005:10029"
+      - "127.0.0.1:16105:6060"
+      - "127.0.0.1:19005:9090"
     volumes:
       - wb-client05-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro
@@ -369,9 +369,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20006:10029"
-      - "16106:6060"
-      - "19006:9090"
+      - "127.0.0.1:20006:10029"
+      - "127.0.0.1:16106:6060"
+      - "127.0.0.1:19006:9090"
     volumes:
       - wb-client06-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro
@@ -403,9 +403,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20007:10029"
-      - "16107:6060"
-      - "19007:9090"
+      - "127.0.0.1:20007:10029"
+      - "127.0.0.1:16107:6060"
+      - "127.0.0.1:19007:9090"
     volumes:
       - wb-client07-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro
@@ -437,9 +437,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20008:10029"
-      - "16108:6060"
-      - "19008:9090"
+      - "127.0.0.1:20008:10029"
+      - "127.0.0.1:16108:6060"
+      - "127.0.0.1:19008:9090"
     volumes:
       - wb-client08-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro
@@ -471,9 +471,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20009:10029"
-      - "16109:6060"
-      - "19009:9090"
+      - "127.0.0.1:20009:10029"
+      - "127.0.0.1:16109:6060"
+      - "127.0.0.1:19009:9090"
     volumes:
       - wb-client09-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro
@@ -505,9 +505,9 @@ services:
       - --pprof.blockprofilerate=100000
       - --pprof.mutexprofilefraction=100
     ports:
-      - "20010:10029"
-      - "16110:6060"
-      - "19010:9090"
+      - "127.0.0.1:20010:10029"
+      - "127.0.0.1:16110:6060"
+      - "127.0.0.1:19010:9090"
     volumes:
       - wb-client10-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro

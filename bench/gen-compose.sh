@@ -38,7 +38,7 @@ services:
       - -zmqpubrawblock=tcp://0.0.0.0:28332
       - -zmqpubrawtx=tcp://0.0.0.0:28333
     ports:
-      - "19443:18443"
+      - "127.0.0.1:19443:18443"
     volumes:
       # This image's entrypoint runs bitcoind with -datadir=/home/bitcoin/.bitcoin
       # (BITCOIN_DATA); mounting anywhere else leaves electrs reading an empty dir.
@@ -71,7 +71,7 @@ services:
       - --daemon-dir=/home/user/.bitcoin
       - --db-dir=/electrs-db
     ports:
-      - "13002:3002"
+      - "127.0.0.1:13002:3002"
     volumes:
       - wb-bitcoind-data:/home/user/.bitcoin:ro
       - wb-electrs-data:/electrs-db
@@ -102,7 +102,7 @@ services:
       - --tlsextradomain=wb-lnd
       - --debuglevel=info
     ports:
-      - "11009:10009"
+      - "127.0.0.1:11009:10009"
     volumes:
       - wb-lnd-data:/root/.lnd
     networks: [wavebench]
@@ -129,7 +129,7 @@ services:
       POSTGRES_PASSWORD: lightning
       POSTGRES_DB: lumos
     ports:
-      - "15432:5432"
+      - "127.0.0.1:15432:5432"
     volumes:
       - wb-pg-data:/var/lib/postgresql/data
     networks: [wavebench]
@@ -174,10 +174,10 @@ EOF
 for f in $PROFILE_FLAGS; do echo "      - $f"; done
 cat <<EOF
     ports:
-      - "17070:7070"
-      - "18085:8081"
-      - "16060:6060"
-      - "19090:9090"
+      - "127.0.0.1:17070:7070"
+      - "127.0.0.1:18085:8081"
+      - "127.0.0.1:16060:6060"
+      - "127.0.0.1:19090:9090"
     volumes:
       - wb-lnd-data:/lnd:ro
       - wb-lumosd-data:/root/.lumosd
@@ -217,9 +217,9 @@ EOF
 for f in $PROFILE_FLAGS; do echo "      - $f"; done
 cat <<EOF
     ports:
-      - "200$i:10029"
-      - "161$i:6060"
-      - "190$i:9090"
+      - "127.0.0.1:200$i:10029"
+      - "127.0.0.1:161$i:6060"
+      - "127.0.0.1:190$i:9090"
     volumes:
       - wb-client$i-data:/root/.waved
       - wb-lumosd-data:/lumosd:ro

@@ -32,7 +32,7 @@
           "passed": 10,
           "quote_rejected": 0,
           "failed": 0,
-          "p50_s": 19.260,
+          "p50_s": 19.26,
           "max_s": 24.481
         }
       }
@@ -210,7 +210,7 @@
       {
         "name": "send",
         "status": "pass",
-        "duration_s": 14.80,
+        "duration_s": 14.8,
         "db_ms": 784.0,
         "detail": {
           "sends": 30,
@@ -231,7 +231,7 @@
           "passed": 10,
           "quote_rejected": 0,
           "failed": 0,
-          "p50_s": 22.300,
+          "p50_s": 22.3,
           "max_s": 23.002
         }
       }
@@ -359,7 +359,7 @@
   {
     "epoch": 5,
     "finished_at": "2026-08-31T14:49:41Z",
-    "duration_s": 36.50,
+    "duration_s": 36.5,
     "versions": {
       "lumosd": "0.1.0",
       "waved": "0.1.1"
@@ -611,7 +611,7 @@
           "sends": 30,
           "passed": 30,
           "failed": 0,
-          "p50_s": 3.230,
+          "p50_s": 3.23,
           "max_s": 5.823,
           "total_amount_sat": 1216235
         }
@@ -626,8 +626,8 @@
           "passed": 10,
           "quote_rejected": 0,
           "failed": 0,
-          "p50_s": 29.610,
-          "max_s": 31.140
+          "p50_s": 29.61,
+          "max_s": 31.14
         }
       }
     ],
@@ -675,7 +675,7 @@
   {
     "epoch": 9,
     "finished_at": "2026-08-31T14:57:15Z",
-    "duration_s": 247.40,
+    "duration_s": 247.4,
     "versions": {
       "lumosd": "0.1.0",
       "waved": "0.1.1"
@@ -747,7 +747,7 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 3266922,
+      "residual_sat": 0,
       "claims_residual_sat": 1278347
     }
   },
@@ -826,7 +826,7 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 6956868,
+      "residual_sat": 0,
       "claims_residual_sat": -271721
     }
   },
@@ -905,7 +905,7 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 8350836,
+      "residual_sat": 36584,
       "claims_residual_sat": -709300
     }
   },
@@ -984,7 +984,7 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 9981359,
+      "residual_sat": 63421,
       "claims_residual_sat": -1371178
     }
   }

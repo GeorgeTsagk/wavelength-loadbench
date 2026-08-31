@@ -119,6 +119,23 @@ T1=$(date +%s.%N)
 TOTAL=$(awk -v a="$T0" -v b="$T1" 'BEGIN{printf "%.2f", b-a}')
 FINISHED=$(date -u +%FT%TZ)
 
+# Best-effort settle before the after-snapshot: queued refreshes and
+# in-flight transfers hold sats in pending buckets, and a snapshot taken
+# mid-churn reads each client at a slightly different moment. The residual
+# formula is correct either way; this just shrinks the window. Never waits
+# long enough to stall the epoch.
+clients_settled() {
+  local n b
+  for n in $CLIENTS; do
+    b=$(wavecli "$n" balance 2>/dev/null) || return 1
+    jq -e '(.pending_in_sat | tonumber) == 0 and (.pending_out_sat | tonumber) == 0' \
+      <<<"$b" >/dev/null || return 1
+  done
+}
+if ! mine_until 90 clients_settled; then
+  log "pending transfers did not settle within 90s, snapshotting anyway"
+fi
+
 log "collecting after snapshot"
 AFTER=$(snapshot)
 
@@ -127,12 +144,17 @@ log "operator rounds this epoch: $(printf '%s' "$ROUNDS" | jq -c .)"
 
 # Capital conservation. Every sat in the system entered through a
 # harness-made boarding deposit, so total-deposited is exact: the bootstrap
-# seed plus BOARD_AMOUNT per successful board ever recorded. The invariant
-#   deposited == clients_spendable + clients_pending_net + fees_extracted
-# held to the sat when wired; residual is null (never zero) when any input
-# was unreadable, and any non-null non-zero value means sats appeared or
-# vanished. claims_residual cross-checks the ledger's own liability account
-# against what clients report.
+# seed plus BOARD_AMOUNT per successful board ever recorded. The invariant:
+#   deposited == spendable + pending_in + pending_out + fees_extracted
+# Pending buckets each count once: a sat mid-flight has left the sender's
+# confirmed balance and appears as that sender's pending_out (a queued
+# refresh locks vtxos into pending_out the same way); an incoming deposit
+# not yet confirmed is the receiver's pending_in. Netting the two counted
+# in-flight value twice and fabricated a 10M sat "violation" in v2 epoch
+# 9-12 while refresh queues were backed up. Residual is null (never zero)
+# when any input was unreadable; any non-null non-zero value means sats
+# appeared or vanished. claims_residual cross-checks the ledger's own
+# liability account against what clients report.
 PREV_DEPOSITED=$(tail -n 1 "$DATA" 2>/dev/null \
   | jq -r '.capital_check.deposited_cum_sat // empty')
 [[ -n "$PREV_DEPOSITED" ]] || PREV_DEPOSITED=$DEPOSITED_BOOTSTRAP_SAT
@@ -140,13 +162,14 @@ BOARDS_OK=$(jq '[.[] | select(.status == "pass")] | length' <<<"$BOARD_DETAIL")
 DEPOSITED=$(( PREV_DEPOSITED + BOARDS_OK * BOARD_AMOUNT ))
 CAPITAL_CHECK=$(jq -cn --argjson dep "$DEPOSITED" --argjson a "$AFTER" '
   ($a.capital.clients_spendable_sat) as $sp |
-  ($a.capital.clients_pending_net_sat) as $pn |
+  ($a.capital.clients_pending_in_sat) as $pi |
+  ($a.capital.clients_pending_out_sat) as $po |
   ($a.capital.fees_extracted_sat) as $fees |
   ($a.capital.ledger.user_vtxo_claims) as $claims |
   {deposited_cum_sat: $dep,
    residual_sat:
-     (if $sp == null or $pn == null or $fees == null then null
-      else $dep - $sp - $pn - $fees end),
+     (if $sp == null or $pi == null or $po == null or $fees == null then null
+      else $dep - $sp - $pi - $po - $fees end),
    claims_residual_sat:
      (if $sp == null or $claims == null then null
       else $sp + $claims end)}')

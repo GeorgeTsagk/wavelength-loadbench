@@ -222,10 +222,14 @@ client_metrics() {
 # wallet. Client-side sums are passed in by snapshot() so the three
 # independent views of user capital (clients' balances, the indexer's live
 # value, the ledger's user_vtxo_claims liability) travel together and can be
-# cross-checked. Ledger revenue accounts are negative by accounting
-# convention; fees_extracted_sat flips them positive.
+# cross-checked. Pending in and out are carried separately: a sat leaving a
+# sender's confirmed balance shows up once, as that sender's pending_out (a
+# queued refresh does the same with its locked vtxos), so conservation must
+# count each pending bucket once and never net them against each other.
+# Ledger revenue accounts are negative by accounting convention;
+# fees_extracted_sat flips them positive.
 capital_metrics() {
-  local spendable=$1 pending_net=$2
+  local spendable=$1 pending_in=$2 pending_out=$3
   prom_fetch wb-lumosd
   local ledger
   ledger=$(printf '%s' "${PROM_CACHE[wb-lumosd]}" | awk '
@@ -254,12 +258,14 @@ capital_metrics() {
     --argjson wallet_confirmed "$(prom_json wb-lumosd lumosd_wallet_confirmed_satoshis)" \
     --argjson wallet_unconfirmed "$(prom_json wb-lumosd lumosd_wallet_unconfirmed_satoshis)" \
     --argjson spendable "${spendable:-null}" \
-    --argjson pending_net "${pending_net:-null}" \
+    --argjson pending_in "${pending_in:-null}" \
+    --argjson pending_out "${pending_out:-null}" \
     '{ledger: $ledger, vtxo_value: $vtxo_value, vtxo_count: $vtxo_count,
       wallet_confirmed_sat: $wallet_confirmed,
       wallet_unconfirmed_sat: $wallet_unconfirmed,
       clients_spendable_sat: $spendable,
-      clients_pending_net_sat: $pending_net,
+      clients_pending_in_sat: $pending_in,
+      clients_pending_out_sat: $pending_out,
       fees_extracted_sat:
         (if $ledger == {} then null else
           (0 - (($ledger.boarding_fee_revenue // 0)
@@ -292,13 +298,13 @@ snapshot() {
   done
   # Client-side capital sums. Null (not zero) when any client failed to
   # report, so a partial read can never fake a conservation violation (P5).
-  local spendable pending_net
+  local spendable pending_in pending_out
   spendable=$(jq -r 'if any(.[]; .balance_sat == null) then "null"
     else ([.[].balance_sat | tonumber] | add) end' <<<"$clients")
-  pending_net=$(jq -r 'if any(.[]; .pending_in_sat == null or .pending_out_sat == null)
-    then "null"
-    else ([.[] | (.pending_in_sat | tonumber) - (.pending_out_sat | tonumber)] | add) end' \
-    <<<"$clients")
+  pending_in=$(jq -r 'if any(.[]; .pending_in_sat == null) then "null"
+    else ([.[].pending_in_sat | tonumber] | add) end' <<<"$clients")
+  pending_out=$(jq -r 'if any(.[]; .pending_out_sat == null) then "null"
+    else ([.[].pending_out_sat | tonumber] | add) end' <<<"$clients")
   local height electrs_tip
   height=$(btc getblockcount 2>/dev/null || echo null)
   electrs_tip=$(curl -s --max-time 5 localhost:13002/blocks/tip/height 2>/dev/null \
@@ -306,7 +312,7 @@ snapshot() {
   jq -cn --argjson height "${height:-null}" \
     --argjson electrs_tip "${electrs_tip:-null}" \
     --argjson operator "$(operator_metrics)" \
-    --argjson capital "$(capital_metrics "$spendable" "$pending_net")" \
+    --argjson capital "$(capital_metrics "$spendable" "$pending_in" "$pending_out")" \
     --argjson clients "$clients" \
     --argjson containers "$CONTAINER_STATS" \
     '{block_height: $height, electrs_tip: $electrs_tip,

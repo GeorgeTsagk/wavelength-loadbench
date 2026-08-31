@@ -41,7 +41,10 @@ docker exec wb-pg psql -U lightning -d lumos -q -c \
 for _ in $(seq 1 60); do btc getblockchaininfo >/dev/null 2>&1 && break; sleep 1; done
 btc getblockchaininfo >/dev/null || die "bitcoind never came up"
 
+# A recreated bitcoind container starts with no wallet loaded even though
+# the wallet file persists in the volume, so load before creating.
 btc listwallets | jq -e 'index("miner")' >/dev/null 2>&1 \
+  || btc loadwallet miner >/dev/null 2>&1 \
   || { log "creating miner wallet"; btc createwallet miner >/dev/null; }
 
 # Coinbase outputs need 100 confirmations before they are spendable.

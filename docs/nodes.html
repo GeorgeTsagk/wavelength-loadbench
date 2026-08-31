@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bottleneck Snapshot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  /* Page-specific: the control row and the bar form. Everything else comes
+     from tokens.css, which is generated from the series page. */
+  .controls {
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+    padding: .8rem 1rem; background: var(--surface);
+    border: 1px solid var(--hairline); border-radius: 12px;
+  }
+  .controls label {
+    font-family: "IBM Plex Mono", monospace; font-size: .6875rem;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3);
+  }
+  select {
+    font: inherit; font-size: .875rem; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 8px; padding: .34rem 2rem .34rem .6rem; cursor: pointer;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink-3) 50%),
+                      linear-gradient(135deg, var(--ink-3) 50%, transparent 50%);
+    background-position: calc(100% - 15px) 52%, calc(100% - 10px) 52%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+  }
+  select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .controls .ctx { margin-left: auto; font-size: .8125rem; color: var(--ink-3); }
+
+  input[type="search"] {
+    font: inherit; font-size: .8125rem; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 8px; padding: .34rem .6rem; min-width: 13rem;
+  }
+  input[type="search"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  th[data-sort] { cursor: pointer; user-select: none; }
+  th[data-sort]:hover { color: var(--ink); }
+  th.sorted::after { content: " \25BE"; color: var(--accent); }
+  th.sorted.asc::after { content: " \25B4"; }
+
+  /* Magnitude is drawn behind the value, so the table reads as a chart without
+     needing a separate one. */
+  td.mag { position: relative; }
+  td.mag .b {
+    position: absolute; left: 0; top: 3px; bottom: 3px;
+    background: var(--series-1); opacity: .18; border-radius: 0 3px 3px 0;
+  }
+  td.mag span { position: relative; }
+  td.neg .b { background: var(--good); }
+  td.pos .b { background: var(--crit); }
+  td.name { max-width: 42rem; overflow: hidden; text-overflow: ellipsis;
+            font-size: .75rem; }
+  tr.has-stack { cursor: pointer; }
+  tr.stack td {
+    font-size: .6875rem; color: var(--ink-3); white-space: pre-wrap;
+    padding-top: 0; padding-bottom: .5rem;
+  }
+
+  /* Verdict pills. A named bottleneck class is a finding, so it reads as one;
+     latency-bound is the benign case where no subsystem is the culprit. */
+  #op-what { flex-basis: 100%; margin: .25rem 0 0; }
+  .verdict { font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .6875rem; font-weight: 600; letter-spacing: .04em;
+    padding: .125rem .4375rem; border-radius: 3px;
+    background: var(--sunken); color: var(--ink-2); white-space: nowrap; }
+  .verdict.cpu-bound, .verdict.db-bound, .verdict.lock-bound,
+  .verdict.blocking-bound { background: var(--crit-bg); color: var(--crit); }
+  .verdict.latency-bound { background: var(--good-bg); color: var(--good); }
+  #bn-tbl tbody tr { cursor: pointer; }
+  #bn-tbl tbody tr.open { background: var(--sunken); }
+  tr.bn-detail > td { padding: 0 .625rem .75rem; }
+  tr.bn-detail .cols { display: grid; gap: 1.125rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+  tr.bn-detail h4 { margin: 0 0 .25rem; font-size: .6875rem;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  tr.bn-detail ol { margin: 0; padding-left: 1.125rem; font-size: .75rem;
+    color: var(--ink-2); }
+  tr.bn-detail code { font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .6875rem; overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Wavelength Growth Bench &middot; <a href="./">back to the series</a></span>
+    <h1>Bottleneck Snapshot</h1>
+    <p class="lede">What held each operation up in the most recent epoch, and where
+      the observed client's resources go. This page is deliberately one point in
+      time: the series page carries the history.</p>
+  </header>
+
+  <section class="card" id="bn-card" hidden>
+    <p class="eyebrow">Bottleneck</p>
+    <h2>What held each operation up</h2>
+    <p class="note">A time budget per operation, from four independent sources:
+      the operation's own duration, the daemon's cgroup CPU delta across
+      exactly that operation, goroutine blocking on real dependencies, and
+      summed postgres statement time. Whichever dominates names the class.
+      Rows are clickable for the contributing functions and queries. The
+      operator's function names are not published, because the lumos
+      repository is private; its budget and verdict are.</p>
+    <p class="note" id="bn-caveat"></p>
+    <div class="scroll"><table id="bn-tbl"><thead><tr>
+      <th>operation</th><th>node</th><th>verdict</th>
+      <th class="num">wall</th><th class="num">cpu</th><th class="num">block</th>
+      <th class="num">mutex</th><th class="num">db</th>
+    </tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="card">
+    <span class="eyebrow">Client fleet</span>
+    <h2>All ten clients at end of epoch</h2>
+    <p class="note">Balance and vtxos are the workload's ground truth; the sqlite
+      footprint includes the WAL, and <code>unbackfilled</code> is how many WAL
+      frames a checkpoint has not folded into the main file yet: a figure that
+      only rises means checkpointing has stalled and the WAL will grow without
+      bound.</p>
+    <div class="scroll"><table id="fleet-tbl"><thead><tr>
+      <th>client</th><th class="num">balance</th><th class="num">live vtxos</th>
+      <th class="num">sqlite</th><th class="num">unbackfilled</th>
+      <th class="num">goroutines</th><th class="num">go heap</th>
+    </tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="controls">
+    <label for="op">Operation</label>
+    <select id="op">
+      <option value="epoch">whole epoch (snapshot)</option>
+      <option value="send">send</option>
+      <option value="refresh">refresh</option>
+      <option value="growth">across epochs</option>
+    </select>
+    <label for="prof">Profile</label>
+    <select id="prof">
+      <option value="heap">heap &mdash; memory held now</option>
+      <option value="allocs">allocs &mdash; memory ever allocated</option>
+      <option value="goroutine">goroutines</option>
+    </select>
+    <label for="attr">Attribution</label>
+    <select id="attr">
+      <option value="folded">folded onto owned code</option>
+      <option value="raw">raw, by leaf function</option>
+    </select>
+    <label for="grp">Group</label>
+    <select id="grp">
+      <option value="fn">by function</option>
+      <option value="pkg">by package</option>
+    </select>
+    <input id="filter" type="search" placeholder="filter by name..." autocomplete="off">
+    <span class="ctx" id="ctx"></span>
+    <p class="note" id="op-what"></p>
+  </section>
+
+  <section class="card">
+    <span class="eyebrow">Where the resources go &middot; wb-client01</span>
+    <h2 id="prof-h">Profile</h2>
+    <div class="hero"><span class="n num" id="prof-hero" style="font-size:2rem">&mdash;</span>
+      <span class="u" id="prof-sub"></span></div>
+    <p class="note" id="prof-note"></p>
+    <div class="scroll"><table id="prof-tbl"><thead><tr>
+      <th data-sort="name">name</th>
+      <th data-sort="flat" class="sorted">flat</th>
+      <th>share</th>
+      <th data-sort="cum">cumulative</th>
+    </tr></thead><tbody></tbody></table></div>
+    <p class="note" id="prof-empty" hidden></p>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+const fmtBytes = b => {
+  const s = b < 0 ? '−' : '';
+  b = Math.abs(b);
+  if (b >= 1073741824) return s + (b / 1073741824).toFixed(2) + ' GiB';
+  if (b >= 1048576) return s + (b / 1048576).toFixed(1) + ' MiB';
+  if (b >= 1024) return s + (b / 1024).toFixed(0) + ' KiB';
+  return s + b + ' B';
+};
+const fmtCount = n => (n === null || n === undefined) ? '—' : n.toLocaleString('en-US');
+const fmtSat = v => (v === null || v === undefined) ? '—' : fmtCount(+v) + ' sat';
+
+let LATEST = null;
+let PROFILES = null;
+const sortState = { prof: { key: 'flat', asc: false } };
+
+const CASE_WHAT = {
+  send: '30 client-to-client OOR payments in 3 waves of 10: every client sends '
+      + 'once per wave, concurrently, to a uniformly random other client, '
+      + '2000-5000 sat, timed from submission to the OOR session reaching a '
+      + 'terminal state.',
+  refresh: 'Every client queues a refresh of its whole vtxo set and auto-joins '
+      + 'the next round, so all ten land in one 10-participant round; timed '
+      + 'until each client’s round FSM reaches a terminal state, with the '
+      + 'harness mining throughout.',
+};
+
+// One renderer for the profile table.
+function renderTable(tblId, rows, cols, state) {
+  const tbl = document.getElementById(tblId);
+  const tbody = tbl.querySelector('tbody');
+  tbody.textContent = '';
+  tbl.querySelectorAll('th[data-sort]').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.sort === state.key);
+    th.classList.toggle('asc', th.dataset.sort === state.key && state.asc);
+  });
+
+  const dir = state.asc ? 1 : -1;
+  rows = rows.slice().sort((a, b) => {
+    const k = state.key;
+    if (k === 'name') return dir * String(a.name).localeCompare(String(b.name));
+    return dir * ((a[k] || 0) - (b[k] || 0));
+  });
+
+  const max = Math.max(...rows.map(r => Math.abs(r[cols.magKey] || 0)), 1);
+  for (const r of rows) {
+    const tr = document.createElement('tr');
+    if (r.stack && r.stack.length) tr.className = 'has-stack';
+
+    const name = document.createElement('td');
+    name.className = 'name';
+    // Names come from a binary and are not markup; insert as text.
+    name.textContent = r.name;
+    name.title = r.name;
+    tr.append(name);
+
+    for (const c of cols.cells) {
+      const td = document.createElement('td');
+      if (c.mag) {
+        td.className = 'mag' + (r[c.key] < 0 ? ' neg' : (cols.signed ? ' pos' : ''));
+        const b = document.createElement('div');
+        b.className = 'b';
+        b.style.width = (Math.abs(r[c.key] || 0) / max * 100).toFixed(1) + '%';
+        td.append(b);
+        const sp = document.createElement('span');
+        sp.textContent = c.fmt(r[c.key]);
+        td.append(sp);
+      } else {
+        td.textContent = c.fmt(r[c.key], r);
+      }
+      tr.append(td);
+    }
+    tbody.append(tr);
+
+    if (r.stack && r.stack.length) {
+      const sr = document.createElement('tr');
+      sr.className = 'stack';
+      sr.hidden = true;
+      const td = document.createElement('td');
+      td.colSpan = 1 + cols.cells.length;
+      td.textContent = r.stack.join('\n');
+      sr.append(td);
+      tbody.append(sr);
+      tr.addEventListener('click', () => { sr.hidden = !sr.hidden; });
+    }
+  }
+  return rows.length;
+}
+
+function renderProfile() {
+  const node = 'wb-client01';
+  const op = document.getElementById('op').value;
+  const kind = document.getElementById('prof').value;
+  const attr = document.getElementById('attr').value;
+  const group = document.getElementById('grp').value;
+  const q = document.getElementById('filter').value.trim().toLowerCase();
+  const empty = document.getElementById('prof-empty');
+  const tbody = document.getElementById('prof-tbl').querySelector('tbody');
+
+  const opLabel = document.getElementById('op').selectedOptions[0].textContent;
+  document.getElementById('prof-h').textContent =
+    node + ' — ' + kind + ' — ' + opLabel;
+
+  document.getElementById('op-what').textContent =
+    CASE_WHAT[op] || (op === 'epoch'
+      ? 'The whole epoch: every case plus the snapshots taken around them.'
+      : op === 'growth'
+      ? 'Difference between this epoch and the first epoch captured, so what '
+        + 'has accumulated rather than what one run did.'
+      : '');
+
+  const show = (msg) => {
+    tbody.textContent = '';
+    document.getElementById('prof-hero').textContent = 'n/a';
+    document.getElementById('prof-sub').textContent = '';
+    empty.hidden = false;
+    empty.textContent = msg;
+  };
+
+  if (!PROFILES) return show('No profile data published yet.');
+  const n = PROFILES.nodes[node];
+  if (!n) return show('No profiles captured for this node.');
+
+  let src, note, signed = false;
+  if (op === 'epoch') {
+    src = (n.snapshot || {})[kind];
+    note = {
+      heap: 'Live heap at the end of the epoch, after every case has run. This is ' +
+            'what the daemon is holding, not what any one operation did.',
+      allocs: 'Every allocation since the daemon started, so this is lifetime churn ' +
+              'across all epochs, not this epoch alone. Pick an operation to scope it.',
+      goroutine: 'Goroutines at the end of the epoch, grouped by the frame that ' +
+                 'identifies them. Click a row for its stack.',
+    }[kind];
+  } else if (op === 'growth') {
+    src = (n.growth || {})[kind];
+    signed = true;
+    note = 'Difference between the epoch-boundary profiles of epoch ' +
+      PROFILES.baseline_epoch + ' and epoch ' + PROFILES.epoch +
+      '. Positive means the client is holding or allocating more than it was.';
+  } else {
+    const c = (n.cases || {})[op];
+    src = c ? c[kind] : null;
+    signed = true;
+    note = 'Difference across a capture taken immediately before and after this ' +
+      'case, so it is scoped to that operation. For allocs it is what the ' +
+      'operation allocated; for heap it is what the operation left behind.';
+    if (c && c.goroutine_delta !== undefined && kind === 'goroutine') {
+      note = 'This case changed the goroutine count by ' +
+        (c.goroutine_delta >= 0 ? '+' : '') + c.goroutine_delta +
+        '. Per-stack differences are not kept for goroutines; use the whole-epoch ' +
+        'snapshot for stacks.';
+    }
+  }
+  document.getElementById('prof-note').textContent = note || '';
+
+  if (!src) {
+    if (op === 'growth') {
+      return show('Growth needs epoch-boundary profiles from two epochs. ' +
+        PROFILES.profiles_available + ' captured so far.');
+    }
+    if (op !== 'epoch' && kind === 'goroutine') {
+      const d = ((n.cases || {})[op] || {}).goroutine_delta;
+      return show(d === undefined
+        ? 'No goroutine capture for this case yet.'
+        : 'Goroutine count changed by ' + (d >= 0 ? '+' : '') + d +
+          ' during this case. Switch to the whole-epoch snapshot for per-stack detail.');
+    }
+    return show('No ' + kind + ' profile for this selection. It is captured from the ' +
+      'next epoch onward.');
+  }
+
+  const unit = src.unit;
+  const fmt = unit === 'bytes' ? fmtBytes : fmtCount;
+  let list = group === 'pkg' ? (src.packages || []) : (src[attr] || []);
+  let rows = list.map(r => ({
+    name: group === 'pkg' ? r.pkg : r.fn,
+    flat: r.flat, cum: r.cum !== undefined ? r.cum : r.flat, stack: r.stack,
+  }));
+  if (q) rows = rows.filter(r => r.name.toLowerCase().includes(q));
+
+  const total = rows.reduce((a, r) => a + Math.abs(r.flat), 0);
+  document.getElementById('prof-hero').textContent =
+    unit === 'bytes' ? fmt(src.total) : fmtCount(src.total);
+  const bits = [rows.length + ' entries'];
+  if (q) bits.push('matching "' + q + '"');
+  if (attr === 'folded' && src.unattributed) {
+    bits.push(fmt(src.unattributed) + ' not attributable to owned code');
+  }
+  document.getElementById('prof-sub').textContent = bits.join(' · ');
+
+  const count = renderTable('prof-tbl', rows, {
+    magKey: 'flat', signed,
+    cells: [
+      { key: 'flat', mag: true, fmt: v => (signed && v > 0 ? '+' : '') + fmt(v) },
+      { key: 'flat', fmt: v => total ? (Math.abs(v) / total * 100).toFixed(1) + '%' : '0%' },
+      { key: 'cum', fmt: v => fmt(v) },
+    ],
+  }, sortState.prof);
+
+  empty.hidden = count > 0;
+  if (!count) {
+    empty.textContent = q ? 'Nothing matches that filter.'
+      : (src.total === 0
+        ? 'The client did no measurable ' + kind + ' work during this operation.'
+        : 'No rows for this view.');
+  }
+}
+
+function renderFleet() {
+  const tb = document.querySelector('#fleet-tbl tbody');
+  tb.textContent = '';
+  const clients = LATEST.clients || {};
+  for (const name of Object.keys(clients).sort()) {
+    const c = clients[name];
+    const tr = document.createElement('tr');
+    const cells = [
+      name,
+      fmtSat(c.balance_sat),
+      fmtCount(c.live_vtxos),
+      c.sqlite_bytes != null ? fmtBytes(c.sqlite_bytes) : '—',
+      c.wal && c.wal.unbackfilled != null ? fmtCount(c.wal.unbackfilled) : '—',
+      fmtCount(c.goroutines),
+      c.heap_bytes != null ? fmtBytes(c.heap_bytes) : '—',
+    ];
+    cells.forEach((v, i) => {
+      const td = document.createElement('td');
+      td.textContent = v;
+      if (i === 0) td.style.fontFamily = 'inherit';
+      tr.append(td);
+    });
+    tb.append(tr);
+  }
+}
+
+function fmtS(v) {
+  return (v === null || v === undefined) ? '—' : v.toFixed(2) + 's';
+}
+
+function bnDetail(op) {
+  if (op.top && op.top.redacted) {
+    return '<p class="note">' + op.top.redacted + '.</p>';
+  }
+  const list = (title, rows, fmt) => rows && rows.length
+    ? '<div><h4>' + title + '</h4><ol>' +
+      rows.slice(0, 6).map(fmt).join('') + '</ol></div>'
+    : '';
+  return '<div class="cols">' +
+    list('CPU by function', op.top.cpu,
+      r => '<li><code>' + r.fn + '</code> &middot; ' +
+           r.self_s.toFixed(2) + 's</li>') +
+    list('CPU by package', op.top.cpu_packages,
+      r => '<li><code>' + r.pkg + '</code> &middot; ' +
+           r.self_s.toFixed(2) + 's</li>') +
+    list('Blocked on', op.top.block,
+      r => '<li><code>' + r.fn + '</code> &middot; ' +
+           r.self_s.toFixed(2) + 's</li>') +
+    list('Slowest queries', op.top.db,
+      r => '<li>' + r.total_ms.toFixed(0) + 'ms over ' + r.calls +
+           ' calls &middot; <code>' +
+           r.query.replace(/^-- name: /, '') + '</code></li>') +
+    '</div>';
+}
+
+function renderBottlenecks(b) {
+  if (!b || !b.operations || !b.operations.length) return;
+  document.getElementById('bn-card').hidden = false;
+  const raw = b.operations.reduce((a, o) => a + (o.budget.block_raw_s || 0), 0);
+  const filt = b.operations.reduce((a, o) => a + (o.budget.block_s || 0), 0);
+  document.getElementById('bn-caveat').textContent =
+    'Block time is filtered to the sql pool and drivers, sqlite locks, '
+    + 'semaphore and waitgroup waits, and real IO. Unfiltered it totals '
+    + raw.toFixed(0) + 's of goroutine-seconds across these operations against '
+    + filt.toFixed(2) + 's filtered, because every parked goroutine keeps '
+    + 'accruing delay for as long as it waits. Blocking is counted in '
+    + 'goroutine-seconds, so it can exceed wall clock when work is concurrent. '
+    + 'db time exists only for the operator: client sqlite runs in-process '
+    + 'with no statement timer, so its storage time surfaces as cpu and block.';
+
+  const tb = document.querySelector('#bn-tbl tbody');
+  tb.innerHTML = '';
+  b.operations.forEach(op => {
+    const tr = document.createElement('tr');
+    const what = CASE_WHAT[op.case];
+    const caseCell = what
+      ? '<td class="explained" title="' + what + '">' + op.case + '</td>'
+      : '<td>' + op.case + '</td>';
+    tr.innerHTML = caseCell + '<td>' + op.node + '</td>'
+      + '<td><span class="verdict ' + op.verdict + '">' + op.verdict
+      + '</span></td>'
+      + '<td class="num">' + fmtS(op.budget.wall_s) + '</td>'
+      + '<td class="num">' + fmtS(op.budget.cpu_s) + '</td>'
+      + '<td class="num">' + fmtS(op.budget.block_s) + '</td>'
+      + '<td class="num">' + fmtS(op.budget.mutex_s) + '</td>'
+      + '<td class="num">' + fmtS(op.budget.db_s) + '</td>';
+    const det = document.createElement('tr');
+    det.className = 'bn-detail';
+    det.hidden = true;
+    det.innerHTML = '<td colspan="8"><p class="note">' + op.why + '</p>'
+      + bnDetail(op) + '</td>';
+    tr.addEventListener('click', () => {
+      det.hidden = !det.hidden;
+      tr.classList.toggle('open', !det.hidden);
+    });
+    tb.appendChild(tr);
+    tb.appendChild(det);
+  });
+}
+
+function wireSorting() {
+  document.getElementById('prof-tbl').querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const st = sortState.prof;
+      if (st.key === th.dataset.sort) st.asc = !st.asc;
+      else { st.key = th.dataset.sort; st.asc = false; }
+      renderProfile();
+    });
+  });
+}
+
+for (const id of ['op', 'prof', 'attr', 'grp']) {
+  document.getElementById(id).addEventListener('change', renderProfile);
+}
+let t;
+document.getElementById('filter').addEventListener('input', () => {
+  clearTimeout(t);
+  t = setTimeout(renderProfile, 120);
+});
+wireSorting();
+
+Promise.all([
+  fetch('latest.json').then(r => r.json()),
+  fetch('profiles.json').then(r => r.ok ? r.json() : null).catch(() => null),
+  fetch('bottlenecks.json').then(r => r.ok ? r.json() : null).catch(() => null),
+]).then(([d, p, b]) => {
+  LATEST = d;
+  PROFILES = p;
+  document.getElementById('ctx').textContent =
+    `epoch ${d.epoch} · finished ${d.finished_at.replace('T', ' ').replace('Z', ' UTC')}` +
+    ` · lumosd ${d.versions.lumosd} · waved ${d.versions.waved}`;
+  renderBottlenecks(b);
+  renderFleet();
+  renderProfile();
+  document.getElementById('footer').innerHTML =
+    'Raw record: <a href="latest.json">latest.json</a>. Full history: ' +
+    '<a href="epochs.json">epochs.json</a>.';
+}).catch(err => {
+  document.getElementById('ctx').textContent = 'could not load latest.json: ' + err;
+});
+</script>
+</body>
+</html>

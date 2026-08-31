@@ -1,0 +1,66 @@
+[
+  {
+    "epoch": 1,
+    "finished_at": "2026-08-31T13:34:36Z",
+    "duration_s": 36.21,
+    "versions": {
+      "lumosd": "0.1.0",
+      "waved": "0.1.1"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 12.28,
+        "db_ms": 1133.0,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "failed": 0,
+          "p50_s": 1.127,
+          "max_s": 4.142,
+          "total_amount_sat": 106970
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 22.43,
+        "db_ms": 376.0,
+        "detail": {
+          "clients": 10,
+          "passed": 10,
+          "failed": 0,
+          "p50_s": 16.490,
+          "max_s": 21.061
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 178,
+      "operator_pg_bytes": 12147735,
+      "clients_sqlite_bytes": 58930400,
+      "client01_sqlite_bytes": 6035432,
+      "operator_mem": {
+        "mem_bytes": 53665792,
+        "mem_peak_bytes": 64397312
+      },
+      "client01_mem": {
+        "mem_bytes": 41541632,
+        "mem_peak_bytes": 282116096
+      },
+      "operator_goroutines": 402,
+      "client01_goroutines": 134
+    },
+    "delta": {
+      "operator_pg_bytes": 1318912,
+      "clients_sqlite_bytes": 32124040
+    }
+  }
+]

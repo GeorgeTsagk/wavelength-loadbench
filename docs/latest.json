@@ -1,0 +1,172 @@
+{
+  "epoch": 1,
+  "finished_at": "2026-08-31T13:34:36Z",
+  "versions": {
+    "lumosd": "0.1.0",
+    "waved": "0.1.1",
+    "lumos_rev": "ba80830f",
+    "wavelength_rev": "dc4a6637"
+  },
+  "rounds": {
+    "rounds_confirmed": 1,
+    "rounds_failed": 0,
+    "batch_sweeps": 0
+  },
+  "boards": [],
+  "cases": [
+    {
+      "name": "send",
+      "status": "pass",
+      "duration_s": 12.28,
+      "db_ms": 1133.0,
+      "detail": {
+        "sends": 30,
+        "passed": 30,
+        "failed": 0,
+        "p50_s": 1.127,
+        "max_s": 4.142,
+        "total_amount_sat": 106970
+      }
+    },
+    {
+      "name": "refresh",
+      "status": "pass",
+      "duration_s": 22.43,
+      "db_ms": 376.0,
+      "detail": {
+        "clients": 10,
+        "passed": 10,
+        "failed": 0,
+        "p50_s": 16.490,
+        "max_s": 21.061
+      }
+    }
+  ],
+  "clients": {
+    "wb-client01": {
+      "balance_sat": 134022,
+      "live_vtxos": 3,
+      "goroutines": 134,
+      "heap_bytes": 23478272,
+      "sqlite_bytes": 6035432,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    },
+    "wb-client02": {
+      "balance_sat": 145315,
+      "live_vtxos": 4,
+      "goroutines": 136,
+      "heap_bytes": 29458432,
+      "sqlite_bytes": 5837072,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    },
+    "wb-client03": {
+      "balance_sat": 141268,
+      "live_vtxos": 2,
+      "goroutines": 128,
+      "heap_bytes": 26337280,
+      "sqlite_bytes": 5594664,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    },
+    "wb-client04": {
+      "balance_sat": 162395,
+      "live_vtxos": 9,
+      "goroutines": 158,
+      "heap_bytes": 24494080,
+      "sqlite_bytes": 6278152,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    },
+    "wb-client05": {
+      "balance_sat": 148494,
+      "live_vtxos": 5,
+      "goroutines": 141,
+      "heap_bytes": 23314432,
+      "sqlite_bytes": 5878008,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    },
+    "wb-client06": {
+      "balance_sat": 143830,
+      "live_vtxos": 4,
+      "goroutines": 136,
+      "heap_bytes": 25886720,
+      "sqlite_bytes": 5796544,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    },
+    "wb-client07": {
+      "balance_sat": 134384,
+      "live_vtxos": 2,
+      "goroutines": 129,
+      "heap_bytes": 28942336,
+      "sqlite_bytes": 5623504,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    },
+    "wb-client08": {
+      "balance_sat": 149274,
+      "live_vtxos": 5,
+      "goroutines": 140,
+      "heap_bytes": 27041792,
+      "sqlite_bytes": 6364120,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    },
+    "wb-client09": {
+      "balance_sat": 144749,
+      "live_vtxos": 4,
+      "goroutines": 137,
+      "heap_bytes": 24420352,
+      "sqlite_bytes": 5891208,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    },
+    "wb-client10": {
+      "balance_sat": 143429,
+      "live_vtxos": 3,
+      "goroutines": 134,
+      "heap_bytes": 23584768,
+      "sqlite_bytes": 5631696,
+      "wal": {
+        "mx_frame": 0,
+        "n_backfill": 0,
+        "unbackfilled": 0
+      }
+    }
+  },
+  "operator": {
+    "pg_total": 12147735,
+    "goroutines": 402,
+    "heap_bytes": 46325760
+  }
+}

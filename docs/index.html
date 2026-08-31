@@ -261,13 +261,18 @@
 
   <section class="card">
     <span class="eyebrow">Capital efficiency</span>
-    <h2>Sats locked per sat of user balance</h2>
-    <p class="note">Deployed capital divided by user-spendable capital: how
-      much the operator has locked on chain to give users one spendable sat.
-      Every refresh round adds newly-committed outputs while the forfeited
-      batch stays locked until its expiry, so this ratio is expected to climb
-      between sweeps and fall when the sweeper reclaims expired batches. A
-      ratio that only ever climbs means reclamation is not keeping up.</p>
+    <h2>Sats locked per sat of user capital</h2>
+    <p class="note">Locked capital divided by user-owned capital. The
+      numerator is only what sits in unexpired batch outputs and cannot be
+      moved by the operator: value locked in previous rounds (forfeited but
+      co-locked under the tree covenant until that batch's 1008-block
+      expiry) plus the current rounds backing live vtxos. The operator's
+      idle wallet is not in it. The denominator is everything users own,
+      spendable or in flight (the indexer's live vtxo value). Every refresh
+      re-locks fresh capital while the forfeited batch waits out its expiry,
+      so the ratio climbs between sweeps and falls when the sweeper reclaims
+      expired batches; a ratio that only ever climbs means reclamation is
+      not keeping up.</p>
     <div class="legend" id="lg-eff"></div>
     <div class="plot" id="p-eff"><div class="tip" id="t-eff"></div></div>
   </section>
@@ -566,8 +571,9 @@ function render(data) {
 
   const cap = last.capital || {};
   const chk = last.capital_check || {};
-  const ratio = cap.deployed_sat != null && cap.spendable_sat
-    ? (cap.deployed_sat / cap.spendable_sat).toFixed(2) + '×' : 'n/a';
+  const userCap = cap.live_vtxo_sat ?? cap.spendable_sat;
+  const ratio = cap.deployed_sat != null && userCap
+    ? (cap.deployed_sat / userCap).toFixed(2) + '×' : 'n/a';
   document.getElementById('readout').innerHTML =
     cell('epochs', data.length, 'appended one per scheduled run') +
     cell('last epoch', fmtSecs(last.duration_s), 'all cases, end to end') +
@@ -575,7 +581,7 @@ function render(data) {
     cell('rounds', fmtInt(totalRounds), 'confirmed by the operator') +
     cell('capital locked', cap.deployed_sat != null ? fmtSat(cap.deployed_sat) : 'n/a',
       'operator, in unexpired batches') +
-    cell('lock ratio', ratio, 'sats locked per user-spendable sat') +
+    cell('lock ratio', ratio, 'sats locked per user-owned sat') +
     cell('conservation', chk.residual_sat === 0 ? '0 sat'
       : (chk.residual_sat == null ? 'n/a' : fmtSat(chk.residual_sat)),
       chk.residual_sat === 0 ? 'every deposited sat accounted for'
@@ -642,11 +648,12 @@ function render(data) {
   lineChart(document.getElementById('p-eff'), document.getElementById('t-eff'),
     document.getElementById('lg-eff'),
     series([
-      { name: 'deployed ÷ user spendable', label: 'lock ratio',
+      { name: 'deployed ÷ user-owned capital', label: 'lock ratio',
         color: 'var(--series-2)',
         pick: e => {
           const d = opt(e, ['capital', 'deployed_sat']);
-          const s = opt(e, ['capital', 'spendable_sat']);
+          const s = opt(e, ['capital', 'live_vtxo_sat'])
+                 ?? opt(e, ['capital', 'spendable_sat']);
           return d != null && s ? d / s : null;
         } },
     ]), fmtRatio);

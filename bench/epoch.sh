@@ -125,6 +125,33 @@ AFTER=$(snapshot)
 ROUNDS=$(round_stats "$STARTED")
 log "operator rounds this epoch: $(printf '%s' "$ROUNDS" | jq -c .)"
 
+# Capital conservation. Every sat in the system entered through a
+# harness-made boarding deposit, so total-deposited is exact: the bootstrap
+# seed plus BOARD_AMOUNT per successful board ever recorded. The invariant
+#   deposited == clients_spendable + clients_pending_net + fees_extracted
+# held to the sat when wired; residual is null (never zero) when any input
+# was unreadable, and any non-null non-zero value means sats appeared or
+# vanished. claims_residual cross-checks the ledger's own liability account
+# against what clients report.
+PREV_DEPOSITED=$(tail -n 1 "$DATA" 2>/dev/null \
+  | jq -r '.capital_check.deposited_cum_sat // empty')
+[[ -n "$PREV_DEPOSITED" ]] || PREV_DEPOSITED=$DEPOSITED_BOOTSTRAP_SAT
+BOARDS_OK=$(jq '[.[] | select(.status == "pass")] | length' <<<"$BOARD_DETAIL")
+DEPOSITED=$(( PREV_DEPOSITED + BOARDS_OK * BOARD_AMOUNT ))
+CAPITAL_CHECK=$(jq -cn --argjson dep "$DEPOSITED" --argjson a "$AFTER" '
+  ($a.capital.clients_spendable_sat) as $sp |
+  ($a.capital.clients_pending_net_sat) as $pn |
+  ($a.capital.fees_extracted_sat) as $fees |
+  ($a.capital.ledger.user_vtxo_claims) as $claims |
+  {deposited_cum_sat: $dep,
+   residual_sat:
+     (if $sp == null or $pn == null or $fees == null then null
+      else $dep - $sp - $pn - $fees end),
+   claims_residual_sat:
+     (if $sp == null or $claims == null then null
+      else $sp + $claims end)}')
+log "capital check: $(printf '%s' "$CAPITAL_CHECK" | jq -c .)"
+
 # Deterministic chain advance, outside every timed window. This is what
 # ages batches toward the sweeper on a schedule the harness controls.
 log "advancing chain by $MINE_BLOCKS_PER_EPOCH blocks"
@@ -172,12 +199,14 @@ RECORD=$(jq -cn \
   --argjson after "$AFTER" \
   --argjson delta "$DELTA" \
   --argjson rounds "$ROUNDS" \
+  --argjson capital_check "$CAPITAL_CHECK" \
   '{epoch: $epoch, started_at: $started_at, finished_at: $finished_at,
     duration_s: $duration_s, schema_note: $schema_note,
     versions: {lumosd: $operator_version, waved: $client_version,
                lumos_rev: $lumos_rev, wavelength_rev: $wavelength_rev},
     config: $config, boards: $boards, cases: $cases,
-    before: $before, after: $after, delta: $delta, rounds: $rounds}')
+    before: $before, after: $after, delta: $delta, rounds: $rounds,
+    capital_check: $capital_check}')
 
 echo "$RECORD" >> "$DATA"
 echo "$RECORD" | jq . > "$RUNDIR/record.json"

@@ -61,7 +61,9 @@
     "delta": {
       "operator_pg_bytes": 1318912,
       "clients_sqlite_bytes": 32124040
-    }
+    },
+    "capital": null,
+    "capital_check": null
   },
   {
     "epoch": 2,
@@ -126,6 +128,86 @@
     "delta": {
       "operator_pg_bytes": 2957312,
       "clients_sqlite_bytes": 42672736
+    },
+    "capital": null,
+    "capital_check": null
+  },
+  {
+    "epoch": 3,
+    "finished_at": "2026-08-31T14:11:07Z",
+    "duration_s": 66.72,
+    "versions": {
+      "lumosd": "0.1.0",
+      "waved": "0.1.1"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 39.45,
+        "db_ms": 723.8,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "failed": 0,
+          "p50_s": 1.082,
+          "max_s": 31.254,
+          "total_amount_sat": 113574
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 25.71,
+        "db_ms": 740.1,
+        "detail": {
+          "clients": 10,
+          "passed": 10,
+          "failed": 0,
+          "p50_s": 19.560,
+          "max_s": 23.942
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 228,
+      "operator_pg_bytes": 14695447,
+      "clients_sqlite_bytes": 66798712,
+      "client01_sqlite_bytes": 7612496,
+      "operator_mem": {
+        "mem_bytes": 53620736,
+        "mem_peak_bytes": 67923968
+      },
+      "client01_mem": {
+        "mem_bytes": 49733632,
+        "mem_peak_bytes": 282480640
+      },
+      "operator_goroutines": 345,
+      "client01_goroutines": 178
+    },
+    "delta": {
+      "operator_pg_bytes": 1253376,
+      "clients_sqlite_bytes": 31324968
+    },
+    "capital": {
+      "deployed_sat": 5126428,
+      "spendable_sat": 1099307,
+      "live_vtxo_sat": 1099307,
+      "claims_sat": 738114,
+      "wallet_confirmed_sat": 1595919155,
+      "fees_extracted_sat": 400693
+    },
+    "capital_check": {
+      "deposited_cum_sat": 1500000,
+      "residual_sat": 0,
+      "claims_residual_sat": 361193
     }
   }
 ]

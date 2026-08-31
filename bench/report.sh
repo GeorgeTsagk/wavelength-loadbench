@@ -47,6 +47,13 @@ jq -s --argjson w "$WINDOW" -r '
   "refresh detail: \($cur.cases[] | select(.name == "refresh") | .detail | "\(.passed)/\(.clients) clients, p50 \(.p50_s)s, max \(.max_s)s")",
   "growth: operator \(mb($cur.delta.operator_pg_bytes)), clients \(mb($cur.delta.clients_sqlite_bytes))",
   "rounds: \($cur.rounds.rounds_confirmed) confirmed, \($cur.rounds.rounds_failed) failed, \($cur.rounds.batch_sweeps) sweeps",
+  ( ($cur.capital_check // {}) as $chk
+    | ($cur.after.capital // {}) as $cap
+    | if $chk.residual_sat == null then "   capital: not measured this epoch"
+      elif $chk.residual_sat != 0
+      then "!! CAPITAL NOT CONSERVED: residual \($chk.residual_sat) sat (deposited \($chk.deposited_cum_sat), spendable \($cap.clients_spendable_sat), fees \($cap.fees_extracted_sat))"
+      else "   capital conserved: \($chk.deposited_cum_sat) sat deposited, all accounted (lock ratio \((($cap.ledger.deployed_capital // 0) * 100 / ($cap.clients_spendable_sat // 1) | round) / 100)x)"
+      end ),
   ( [$cur.after.clients[] | select(.balance_sat != null and (.balance_sat | tonumber) < 20000)] as $low
     | if ($low | length) > 0
       then "!! clients running low on balance: \($low | length) below 20k sat"

@@ -236,6 +236,54 @@
   </section>
 
   <section class="card">
+    <span class="eyebrow">Capital</span>
+    <h2>Deployed against user capital</h2>
+    <p class="note">Three views of the system's money. <b>Deployed</b> is the
+      operator ledger's <code>deployed_capital</code>: every sat locked in
+      unexpired on-chain batch outputs, including the operator's own refresh
+      liquidity and fully-forfeited history the sweeper has not reclaimed yet.
+      <b>User spendable</b> is the sum of all ten clients' confirmed offchain
+      balances. <b>Live vtxo value</b> is the operator indexer's total for
+      live vtxos, an independent measurement that should track user spendable
+      exactly. The gap between deployed and the other two is capital the
+      operator has committed beyond what users can spend; batch expiry (1008
+      blocks after a round confirms) is when the sweeper starts winning it
+      back.</p>
+    <div class="legend" id="lg-cap"></div>
+    <div class="plot" id="p-cap"><div class="tip" id="t-cap"></div></div>
+  </section>
+
+  <section class="card">
+    <span class="eyebrow">Capital efficiency</span>
+    <h2>Sats locked per sat of user balance</h2>
+    <p class="note">Deployed capital divided by user-spendable capital: how
+      much the operator has locked on chain to give users one spendable sat.
+      Every refresh round adds newly-committed outputs while the forfeited
+      batch stays locked until its expiry, so this ratio is expected to climb
+      between sweeps and fall when the sweeper reclaims expired batches. A
+      ratio that only ever climbs means reclamation is not keeping up.</p>
+    <div class="legend" id="lg-eff"></div>
+    <div class="plot" id="p-eff"><div class="tip" id="t-eff"></div></div>
+  </section>
+
+  <section class="card">
+    <span class="eyebrow">Capital conservation</span>
+    <h2>Where every sat is</h2>
+    <p class="note">Every sat in the system entered through a harness-made
+      boarding deposit, so total-deposited is known exactly, and
+      <b>conservation residual</b> = deposited &minus; user spendable &minus;
+      pending &minus; operator fees must be zero: any other non-null value
+      means sats appeared or vanished somewhere in the stack. <b>claims
+      residual</b> cross-checks the operator ledger's own
+      <code>user_vtxo_claims</code> liability against what clients report; as
+      wired it trails by exactly the cumulative refresh fees, so it tracking
+      the fee line is the known baseline and a departure from that is the
+      signal. Epochs before this was measured render as gaps.</p>
+    <div class="legend" id="lg-cons"></div>
+    <div class="plot" id="p-cons"><div class="tip" id="t-cons"></div></div>
+  </section>
+
+  <section class="card">
     <span class="eyebrow">Operator storage</span>
     <h2>Operator database</h2>
     <p class="note">Total size postgres reports for the <code>lumos</code> database.
@@ -329,6 +377,15 @@ const fmtBytes = b => {
 };
 const fmtSecs = v => v >= 60 ? (v / 60).toFixed(1) + ' min' : v.toFixed(1) + ' s';
 const fmtInt = v => v.toLocaleString('en-US');
+const fmtSat = v => {
+  const s = v < 0 ? '−' : '';
+  const a = Math.abs(v);
+  if (a >= 1e8) return s + (a / 1e8).toFixed(2) + ' BTC';
+  if (a >= 1e6) return s + (a / 1e6).toFixed(2) + 'M sat';
+  if (a >= 1e4) return s + (a / 1e3).toFixed(0) + 'k sat';
+  return s + fmtInt(a) + ' sat';
+};
+const fmtRatio = v => v.toFixed(2) + '×';
 
 // What each timed case actually does, so the seconds on the chart mean
 // something without reading the harness. Taken from the case bodies and the
@@ -500,11 +557,22 @@ function render(data) {
     a + ((e.rounds || {}).batch_sweeps || 0), 0);
   const totalBoards = data.reduce((a, e) => a + ((e.boards || []).length), 0);
 
+  const cap = last.capital || {};
+  const chk = last.capital_check || {};
+  const ratio = cap.deployed_sat != null && cap.spendable_sat
+    ? (cap.deployed_sat / cap.spendable_sat).toFixed(2) + '×' : 'n/a';
   document.getElementById('readout').innerHTML =
     cell('epochs', data.length, 'appended one per scheduled run') +
     cell('last epoch', fmtSecs(last.duration_s), 'all cases, end to end') +
     cell('payments', fmtInt(totalSends), 'OOR sends completed, cumulative') +
     cell('rounds', fmtInt(totalRounds), 'confirmed by the operator') +
+    cell('capital locked', cap.deployed_sat != null ? fmtSat(cap.deployed_sat) : 'n/a',
+      'operator, in unexpired batches') +
+    cell('lock ratio', ratio, 'sats locked per user-spendable sat') +
+    cell('conservation', chk.residual_sat === 0 ? '0 sat'
+      : (chk.residual_sat == null ? 'n/a' : fmtSat(chk.residual_sat)),
+      chk.residual_sat === 0 ? 'every deposited sat accounted for'
+        : 'deposited minus spendable, pending and fees') +
     cell('operator db', fmtBytes(last.after.operator_pg_bytes ?? 0),
       'postgres, as reported') +
     cell('client dbs', fmtBytes(last.after.clients_sqlite_bytes ?? 0),
@@ -552,6 +620,40 @@ function render(data) {
       return v === null || v === undefined ? [] : [[e.epoch, v]];
     }),
   }));
+
+  lineChart(document.getElementById('p-cap'), document.getElementById('t-cap'),
+    document.getElementById('lg-cap'),
+    series([
+      { name: 'deployed (operator ledger)', label: 'deployed',
+        color: 'var(--series-2)', pick: e => opt(e, ['capital', 'deployed_sat']) },
+      { name: 'user spendable (sum of client balances)', label: 'spendable',
+        color: 'var(--series-1)', pick: e => opt(e, ['capital', 'spendable_sat']) },
+      { name: 'live vtxo value (operator indexer)', label: 'live vtxos',
+        color: 'var(--series-3)', pick: e => opt(e, ['capital', 'live_vtxo_sat']) },
+    ]), fmtSat);
+
+  lineChart(document.getElementById('p-eff'), document.getElementById('t-eff'),
+    document.getElementById('lg-eff'),
+    series([
+      { name: 'deployed ÷ user spendable', label: 'lock ratio',
+        color: 'var(--series-2)',
+        pick: e => {
+          const d = opt(e, ['capital', 'deployed_sat']);
+          const s = opt(e, ['capital', 'spendable_sat']);
+          return d != null && s ? d / s : null;
+        } },
+    ]), fmtRatio);
+
+  lineChart(document.getElementById('p-cons'), document.getElementById('t-cons'),
+    document.getElementById('lg-cons'),
+    series([
+      { name: 'conservation residual (must be zero)', label: 'residual',
+        color: 'var(--series-1)',
+        pick: e => opt(e, ['capital_check', 'residual_sat']) },
+      { name: 'ledger claims residual (baseline: cumulative refresh fees)',
+        label: 'claims', color: 'var(--series-2)',
+        pick: e => opt(e, ['capital_check', 'claims_residual_sat']) },
+    ]), fmtSat);
 
   lineChart(document.getElementById('p-opdb'), document.getElementById('t-opdb'),
     document.getElementById('lg-opdb'),

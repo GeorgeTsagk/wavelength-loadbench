@@ -194,21 +194,78 @@ client_wal_state() {
 
 client_metrics() {
   local n=$1
-  local bal vtxos
-  bal=$(ark_balance "$n"); [[ -n "$bal" ]] || bal=null
+  local balj bal pin pout vtxos
+  balj=$(wavecli "$n" balance 2>/dev/null || echo '{}')
+  bal=$(jq -r '.confirmed_sat // empty' <<<"$balj"); [[ -n "$bal" ]] || bal=null
+  pin=$(jq -r '.pending_in_sat // empty' <<<"$balj"); [[ -n "$pin" ]] || pin=null
+  pout=$(jq -r '.pending_out_sat // empty' <<<"$balj"); [[ -n "$pout" ]] || pout=null
   vtxos=$(live_vtxos "$n"); [[ -n "$vtxos" ]] || vtxos=null
   prom_fetch "$n"
   jq -cn \
     --argjson balance_sat "$bal" \
+    --argjson pending_in_sat "$pin" \
+    --argjson pending_out_sat "$pout" \
     --argjson live_vtxos "$vtxos" \
     --argjson sqlite "$(client_sqlite_bytes "$n")" \
     --argjson wal "$(client_wal_state "$n")" \
     --argjson heap_bytes "$(prom_json "$n" go_memstats_heap_inuse_bytes)" \
     --argjson goroutines "$(prom_json "$n" go_goroutines)" \
     --argjson container "$(printf '%s' "${CONTAINER_STATS:-{\}}" | jq -c --arg k "$n" '.[$k] // {}')" \
-    '{balance_sat: $balance_sat, live_vtxos: $live_vtxos, sqlite: $sqlite,
-      wal: $wal, heap_bytes: $heap_bytes, goroutines: $goroutines,
-      container: $container}'
+    '{balance_sat: $balance_sat, pending_in_sat: $pending_in_sat,
+      pending_out_sat: $pending_out_sat, live_vtxos: $live_vtxos,
+      sqlite: $sqlite, wal: $wal, heap_bytes: $heap_bytes,
+      goroutines: $goroutines, container: $container}'
+}
+
+# Capital view, from the operator's own double-entry ledger (exposed as
+# prometheus gauges), the indexer's per-status vtxo totals, and the operator
+# wallet. Client-side sums are passed in by snapshot() so the three
+# independent views of user capital (clients' balances, the indexer's live
+# value, the ledger's user_vtxo_claims liability) travel together and can be
+# cross-checked. Ledger revenue accounts are negative by accounting
+# convention; fees_extracted_sat flips them positive.
+capital_metrics() {
+  local spendable=$1 pending_net=$2
+  prom_fetch wb-lumosd
+  local ledger
+  ledger=$(printf '%s' "${PROM_CACHE[wb-lumosd]}" | awk '
+    /^lumosd_ledger_account_balance_satoshis\{/ {
+      a = $0; sub(/.*account="/, "", a); sub(/".*/, "", a)
+      printf "%s%s\"%s\":%d", (c++ ? "," : "{"), "", a, $NF
+    }
+    END { print (c ? "}" : "{}") }')
+  local vtxo_val vtxo_cnt
+  vtxo_val=$(printf '%s' "${PROM_CACHE[wb-lumosd]}" | awk '
+    /^lumosd_vtxos_value_satoshis\{/ {
+      s = $0; sub(/.*status="/, "", s); sub(/".*/, "", s)
+      printf "%s%s\"%s\":%d", (c++ ? "," : "{"), "", s, $NF
+    }
+    END { print (c ? "}" : "{}") }')
+  vtxo_cnt=$(printf '%s' "${PROM_CACHE[wb-lumosd]}" | awk '
+    /^lumosd_vtxos\{/ {
+      s = $0; sub(/.*status="/, "", s); sub(/".*/, "", s)
+      printf "%s%s\"%s\":%d", (c++ ? "," : "{"), "", s, $NF
+    }
+    END { print (c ? "}" : "{}") }')
+  jq -cn \
+    --argjson ledger "${ledger:-{\}}" \
+    --argjson vtxo_value "${vtxo_val:-{\}}" \
+    --argjson vtxo_count "${vtxo_cnt:-{\}}" \
+    --argjson wallet_confirmed "$(prom_json wb-lumosd lumosd_wallet_confirmed_satoshis)" \
+    --argjson wallet_unconfirmed "$(prom_json wb-lumosd lumosd_wallet_unconfirmed_satoshis)" \
+    --argjson spendable "${spendable:-null}" \
+    --argjson pending_net "${pending_net:-null}" \
+    '{ledger: $ledger, vtxo_value: $vtxo_value, vtxo_count: $vtxo_count,
+      wallet_confirmed_sat: $wallet_confirmed,
+      wallet_unconfirmed_sat: $wallet_unconfirmed,
+      clients_spendable_sat: $spendable,
+      clients_pending_net_sat: $pending_net,
+      fees_extracted_sat:
+        (if $ledger == {} then null else
+          (0 - (($ledger.boarding_fee_revenue // 0)
+              + ($ledger.refresh_fee_revenue // 0)
+              + ($ledger.oor_fee_revenue // 0)
+              + ($ledger.offboard_fee_revenue // 0))) end)}'
 }
 
 operator_metrics() {
@@ -233,6 +290,15 @@ snapshot() {
     clients=$(jq -cn --argjson acc "$clients" --arg k "$n" \
       --argjson v "$(client_metrics "$n")" '$acc + {($k): $v}')
   done
+  # Client-side capital sums. Null (not zero) when any client failed to
+  # report, so a partial read can never fake a conservation violation (P5).
+  local spendable pending_net
+  spendable=$(jq -r 'if any(.[]; .balance_sat == null) then "null"
+    else ([.[].balance_sat | tonumber] | add) end' <<<"$clients")
+  pending_net=$(jq -r 'if any(.[]; .pending_in_sat == null or .pending_out_sat == null)
+    then "null"
+    else ([.[] | (.pending_in_sat | tonumber) - (.pending_out_sat | tonumber)] | add) end' \
+    <<<"$clients")
   local height electrs_tip
   height=$(btc getblockcount 2>/dev/null || echo null)
   electrs_tip=$(curl -s --max-time 5 localhost:13002/blocks/tip/height 2>/dev/null \
@@ -240,10 +306,12 @@ snapshot() {
   jq -cn --argjson height "${height:-null}" \
     --argjson electrs_tip "${electrs_tip:-null}" \
     --argjson operator "$(operator_metrics)" \
+    --argjson capital "$(capital_metrics "$spendable" "$pending_net")" \
     --argjson clients "$clients" \
     --argjson containers "$CONTAINER_STATS" \
     '{block_height: $height, electrs_tip: $electrs_tip,
-      operator: $operator, clients: $clients, containers: $containers}'
+      operator: $operator, capital: $capital, clients: $clients,
+      containers: $containers}'
 }
 
 # --- profiles ---

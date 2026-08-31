@@ -43,7 +43,17 @@ jq -s '[ .[] | {
     delta: {
       operator_pg_bytes: .delta.operator_pg_bytes,
       clients_sqlite_bytes: .delta.clients_sqlite_bytes
-    }
+    },
+    capital: (if .after.capital == null then null else {
+      deployed_sat: .after.capital.ledger.deployed_capital,
+      spendable_sat: .after.capital.clients_spendable_sat,
+      live_vtxo_sat: .after.capital.vtxo_value.live,
+      claims_sat: (.after.capital.ledger.user_vtxo_claims
+                   | if . == null then null else -. end),
+      wallet_confirmed_sat: .after.capital.wallet_confirmed_sat,
+      fees_extracted_sat: .after.capital.fees_extracted_sat
+    } end),
+    capital_check: (.capital_check // null)
   } ] | sort_by(.epoch)' "$DATA" > "$OUT/epochs.json"
 
 # Profiles into browsable JSON (client only: the operator repo is private),

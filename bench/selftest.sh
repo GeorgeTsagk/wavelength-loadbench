@@ -12,6 +12,7 @@ REQUIRED=(die log btc lnd lumoscli wavecli mine mine_synced mine_until
           ensure_operator_funded prom prom_fetch prom_json prom_port
           pprof_port cgroup_memory cgroup_cpu all_container_stats
           postgres_bytes operator_row_counts client_sqlite_bytes
+          capital_metrics
           client_wal_state client_metrics operator_metrics snapshot
           capture_profiles capture_all cpu_profile_start cpu_profile_stop
           case_cpu pg_stat_reset pg_stat_top pg_total_exec_ms round_stats

@@ -227,14 +227,16 @@
   <section class="card">
     <span class="eyebrow">Rounds</span>
     <h2>Refresh round completion</h2>
-    <p class="note">Per-client time from queueing the refresh to that client's round
-      reaching a terminal state, all ten clients in the same round. The median and
-      the slowest client should track each other; a widening gap means some clients
-      wait on work the round does per participant. A client whose quoted
-      refresh fee would leave too little residual value refuses to join
-      ("insufficient_residual"): those fee-quote rejections count in the
-      epoch detail as their own bucket, not as failures, and are excluded
-      from the timing percentiles.</p>
+    <p class="note">Per-client time from queueing a refresh to that client's round
+      reaching a terminal state. From epoch 14 the policy is wallet-realistic:
+      a client refreshes only vtxos within 300 blocks of batch expiry or with
+      an OOR chain depth of 6+ (a lineage that keeps growing eventually
+      exceeds the operator's 25k vB cap and stops being spendable over OOR).
+      Clients with nothing due skip; skips and fee-quote rejections
+      ("insufficient_residual") count in the epoch detail as their own
+      buckets, not as failures, and are excluded from the percentiles.
+      Epochs 1-13 refreshed every client's whole fleet every epoch, which is
+      why their round times and fee drain run far hotter.</p>
     <div class="legend" id="lg-ref"></div>
     <div class="plot" id="p-ref"><div class="tip" id="t-ref"></div></div>
   </section>
@@ -398,15 +400,16 @@ const CASES = [
   { key: 'send', color: 'var(--series-1)',
     what: '30 client-to-client OOR payments in 3 waves of 10: every client '
         + 'sends once per wave, concurrently, to a uniformly random other '
-        + 'client, 2000-5000 sat. Each payment is timed from submission to '
+        + 'client, 25-100k sat. Each payment is timed from submission to '
         + 'its OOR session reaching a terminal state. Fully offchain: no '
         + 'blocks are mined during this case.' },
   { key: 'refresh', color: 'var(--series-2)',
-    what: 'Every client queues a refresh of its whole vtxo set and auto-joins '
-        + 'the next round, so all ten land in one 10-participant round. The '
-        + 'harness mines one block every ~2s until each client’s round FSM '
-        + 'reaches a terminal state; the case is the wall clock of that whole '
-        + 'span.' },
+    what: 'Selective, wallet-realistic refresh (from epoch 14): each client '
+        + 'refreshes only vtxos within 300 blocks of batch expiry or with an '
+        + 'OOR chain depth of 6+, queued into the next shared round; clients '
+        + 'with nothing due skip. The harness mines until every submitting '
+        + 'client’s round FSM reaches a terminal state. Epochs 1-13 '
+        + 'refreshed the whole fleet every epoch instead.' },
 ];
 const CASE_WHAT = Object.fromEntries(CASES.map(c => [c.key, c.what]));
 

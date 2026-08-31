@@ -1066,5 +1066,86 @@
       "residual_sat": 0,
       "claims_residual_sat": -1192053
     }
+  },
+  {
+    "epoch": 14,
+    "finished_at": "2026-08-31T15:39:27Z",
+    "duration_s": 14.94,
+    "versions": {
+      "lumosd": "0.1.0",
+      "waved": "0.1.1"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 10.93,
+        "db_ms": 2525.2,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "failed": 0,
+          "p50_s": 1.845,
+          "max_s": 4.915,
+          "total_amount_sat": 1197179
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 2.21,
+        "db_ms": 6.9,
+        "detail": {
+          "clients": 10,
+          "passed": 0,
+          "skipped": 10,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 0,
+          "p50_s": null,
+          "max_s": null
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 0,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 592,
+      "operator_pg_bytes": 27221015,
+      "clients_sqlite_bytes": 270039224,
+      "client01_sqlite_bytes": 11695216,
+      "operator_mem": {
+        "mem_bytes": 90480640,
+        "mem_peak_bytes": 136163328
+      },
+      "client01_mem": {
+        "mem_bytes": 111443968,
+        "mem_peak_bytes": 369037312
+      },
+      "operator_goroutines": 853,
+      "client01_goroutines": 950
+    },
+    "delta": {
+      "operator_pg_bytes": 499712,
+      "clients_sqlite_bytes": 22465344
+    },
+    "capital": {
+      "deployed_sat": 197923958,
+      "spendable_sat": 11234615,
+      "live_vtxo_sat": 16193584,
+      "claims_sat": 12426668,
+      "wallet_confirmed_sat": 1417619027,
+      "fees_extracted_sat": 3806416
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "claims_residual_sat": -1192053
+    }
   }
 ]

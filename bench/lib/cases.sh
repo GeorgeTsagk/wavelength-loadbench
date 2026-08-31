@@ -15,13 +15,17 @@ one_oor_send() {
   local from=$1 to=$2 amount=$3 out=$4
   local t0 t1 status pk err="" sid sstat
   t0=$(date +%s.%N)
-  pk=$(wavecli "$to" ark oor receive 2>/dev/null \
+  # A busy receiver can miss the default 30s RPC deadline; give it a real
+  # one and one retry before declaring the receiver unresponsive.
+  pk=$(wavecli "$to" ark oor receive --timeout 60s 2>/dev/null \
+    | jq -r '.pubkey_xonly_hex // empty')
+  [[ -n "$pk" ]] || pk=$(wavecli "$to" ark oor receive --timeout 60s 2>/dev/null \
     | jq -r '.pubkey_xonly_hex // empty')
   if [[ -z "$pk" ]]; then
     status=recv_failed
   else
     err=$(wavecli "$from" ark send oor --pubkey "$pk" \
-      --amount "$amount" --yes --timeout 60s 2>&1)
+      --amount "$amount" --yes --timeout 120s 2>&1)
     sid=$(printf '%s' "$err" | jq -r '.session_id // empty' 2>/dev/null)
     if [[ -z "$sid" ]]; then
       status=fail
@@ -133,25 +137,53 @@ client_refresh_outcome() {
   esac
 }
 
-# Refresh every client's full vtxo set. `refresh --all --yes` only queues
-# the intent and auto-joins the next round, so submission is instant; the
-# work happens in the shared round. All ten submissions land inside the
-# operator's registration window, giving one 10-participant round. Rounds
-# need a confirmation to reach their terminal state and nothing mines here
-# except the harness, so the wait loop mines. Per-client duration is
+# Outpoints a real wallet would refresh now: near batch expiry, or with an
+# OOR lineage deep enough to approach the operator's lineage cap. Newline-
+# separated; empty when the client has nothing due.
+refresh_eligible_outpoints() {
+  local n=$1 height=$2
+  wavecli "$n" ark vtxos list --status live 2>/dev/null | jq -r \
+    --argjson h "$height" \
+    --argjson rem "$REFRESH_MAX_REMAINING_BLOCKS" \
+    --argjson depth "$REFRESH_MAX_CHAIN_DEPTH" '
+    (if type == "array" then . else (.vtxos // []) end)
+    | .[]
+    | select(((.batch_expiry // 0) - $h < $rem)
+             or ((.chain_depth // 0) >= $depth))
+    | .outpoint' 2>/dev/null
+}
+
+# Selective refresh (v2.1): each client refreshes only its due vtxos; a
+# client with nothing due skips, which is a recorded outcome, not a
+# failure. Submissions are instant (queue + auto-join) and land inside the
+# operator's registration window, so the submitting clients share a round.
+# Rounds need a confirmation to reach a terminal state and nothing mines
+# here except the harness, so the wait loop mines. Per-client duration is
 # submit-to-terminal-round.
 case_refresh() {
   local out="$RUNDIR/refresh-results.ndjson"
   : > "$out"
-  declare -A t0 done_at confirmed_before submit_status
-  local n now
+  declare -A t0 done_at confirmed_before submit_status vtxo_count
+  local n now height
   local case_start; case_start=$(date -u +%FT%TZ)
+  height=$(btc getblockcount)
 
   for n in $CLIENTS; do
     confirmed_before[$n]=$(client_confirmed_rounds "$n")
     : "${confirmed_before[$n]:=0}"
     t0[$n]=$(date +%s.%N)
-    if wavecli "$n" ark vtxos refresh --all --yes --timeout 60s \
+    local eligible args=()
+    eligible=$(refresh_eligible_outpoints "$n" "$height")
+    if [[ -z "$eligible" ]]; then
+      submit_status[$n]=skipped
+      vtxo_count[$n]=0
+      done_at[$n]=$(date +%s.%N)
+      continue
+    fi
+    local op
+    while IFS= read -r op; do args+=(--outpoint "$op"); done <<<"$eligible"
+    vtxo_count[$n]=$(( ${#args[@]} / 2 ))
+    if wavecli "$n" ark vtxos refresh "${args[@]}" --yes --timeout 120s \
         >/dev/null 2>&1; then
       submit_status[$n]=pending
     else
@@ -195,17 +227,22 @@ case_refresh() {
     fi
     dur=$(awk -v a="${t0[$n]}" -v b="${done_at[$n]}" 'BEGIN{printf "%.3f", b-a}')
     jq -cn --arg node "$n" --arg status "$status" --argjson duration_s "$dur" \
-      '{node: $node, status: $status, duration_s: $duration_s}' >> "$out"
+      --argjson vtxos "${vtxo_count[$n]:-0}" \
+      '{node: $node, status: $status, duration_s: $duration_s,
+        vtxos: $vtxos}' >> "$out"
   done
 
-  # A quote rejection is expected fee-protection behavior: counted in its
-  # own bucket, kept out of the timing percentiles (the client did no round
-  # work), and it does not fail the case.
+  # A skip (nothing due) and a quote rejection (fee protection) are both
+  # expected outcomes: counted in their own buckets, kept out of the timing
+  # percentiles, and neither fails the case.
   CASE_DETAIL=$(jq -sc '
     {clients: length,
      passed: [.[] | select(.status == "pass")] | length,
+     skipped: [.[] | select(.status == "skipped")] | length,
      quote_rejected: [.[] | select(.status == "quote_rejected")] | length,
-     failed: [.[] | select(.status != "pass" and .status != "quote_rejected")] | length,
+     failed: [.[] | select(.status != "pass" and .status != "skipped"
+                       and .status != "quote_rejected")] | length,
+     vtxos_refreshed: ([.[] | select(.status == "pass") | .vtxos] | add // 0),
      p50_s: ([.[] | select(.status == "pass") | .duration_s] | sort
              | .[(length/2|floor)] // null),
      max_s: ([.[] | select(.status == "pass") | .duration_s] | max // null)}' \

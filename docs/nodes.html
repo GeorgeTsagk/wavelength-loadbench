@@ -196,12 +196,13 @@ const sortState = { prof: { key: 'flat', asc: false } };
 const CASE_WHAT = {
   send: '30 client-to-client OOR payments in 3 waves of 10: every client sends '
       + 'once per wave, concurrently, to a uniformly random other client, '
-      + '2000-5000 sat, timed from submission to the OOR session reaching a '
+      + '25-100k sat, timed from submission to the OOR session reaching a '
       + 'terminal state.',
-  refresh: 'Every client queues a refresh of its whole vtxo set and auto-joins '
-      + 'the next round, so all ten land in one 10-participant round; timed '
-      + 'until each client’s round FSM reaches a terminal state, with the '
-      + 'harness mining throughout.',
+  refresh: 'Selective, wallet-realistic refresh (from epoch 14): only vtxos '
+      + 'within 300 blocks of batch expiry or with OOR chain depth 6+, '
+      + 'queued into the next shared round; clients with nothing due skip. '
+      + 'Timed until each submitting client’s round FSM reaches a terminal '
+      + 'state, with the harness mining throughout.',
 };
 
 // One renderer for the profile table.

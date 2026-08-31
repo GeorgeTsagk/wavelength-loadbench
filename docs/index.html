@@ -230,7 +230,11 @@
     <p class="note">Per-client time from queueing the refresh to that client's round
       reaching a terminal state, all ten clients in the same round. The median and
       the slowest client should track each other; a widening gap means some clients
-      wait on work the round does per participant.</p>
+      wait on work the round does per participant. A client whose quoted
+      refresh fee would leave too little residual value refuses to join
+      ("insufficient_residual"): those fee-quote rejections count in the
+      epoch detail as their own bucket, not as failures, and are excluded
+      from the timing percentiles.</p>
     <div class="legend" id="lg-ref"></div>
     <div class="plot" id="p-ref"><div class="tip" id="t-ref"></div></div>
   </section>

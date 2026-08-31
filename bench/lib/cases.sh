@@ -107,6 +107,32 @@ client_failed_rounds() {
     [.rounds[]? | select(.state == "ROUND_STATE_FAILED")] | length' 2>/dev/null
 }
 
+# Count of the client's confirmed rounds. A refresh only counts as a pass
+# when this number rises: "no active round left" alone is not success,
+# because a client that joined and then dropped at seal time reaps its
+# failed FSM within seconds, leaving nothing behind to see (learned in
+# epoch 14, where all ten clients rejected the fee quote and the case
+# still reported a clean pass).
+client_confirmed_rounds() {
+  wavecli "$1" ark rounds list 2>/dev/null | jq -r '
+    [.rounds[]? | select(.state == "ROUND_STATE_CONFIRMED")] | length' 2>/dev/null
+}
+
+# Failure reason for a refresh that produced no confirmed round, read from
+# the daemon log window rather than the FSM list, which the reaper empties.
+# A fee-quote rejection ("insufficient_residual") is the client's fee
+# protection working, not a malfunction, and must not fail the epoch.
+client_refresh_outcome() {
+  local n=$1 since=$2 win
+  win=$(docker logs --since "$since" "$n" 2>&1 \
+    | grep -E "Round failed|quote rejected" | tail -3)
+  case "$win" in
+    *quote\ rejected*|*insufficient_residual*) echo quote_rejected ;;
+    *Round\ failed*)                           echo round_failed ;;
+    *)                                         echo no_round ;;
+  esac
+}
+
 # Refresh every client's full vtxo set. `refresh --all --yes` only queues
 # the intent and auto-joins the next round, so submission is instant; the
 # work happens in the shared round. All ten submissions land inside the
@@ -117,11 +143,13 @@ client_failed_rounds() {
 case_refresh() {
   local out="$RUNDIR/refresh-results.ndjson"
   : > "$out"
-  declare -A t0 done_at failed_before submit_status
+  declare -A t0 done_at confirmed_before submit_status
   local n now
+  local case_start; case_start=$(date -u +%FT%TZ)
 
   for n in $CLIENTS; do
-    failed_before[$n]=$(client_failed_rounds "$n"); : "${failed_before[$n]:=0}"
+    confirmed_before[$n]=$(client_confirmed_rounds "$n")
+    : "${confirmed_before[$n]:=0}"
     t0[$n]=$(date +%s.%N)
     if wavecli "$n" ark vtxos refresh --all --yes --timeout 60s \
         >/dev/null 2>&1; then
@@ -152,16 +180,16 @@ case_refresh() {
   done
 
   for n in $CLIENTS; do
-    local status=${submit_status[$n]} dur failed_now
+    local status=${submit_status[$n]} dur confirmed_now
     if [[ "$status" == pending ]]; then
       if [[ -z "${done_at[$n]:-}" ]]; then
         status=timeout; done_at[$n]=$(date +%s.%N)
       else
-        failed_now=$(client_failed_rounds "$n"); : "${failed_now:=0}"
-        if (( failed_now > ${failed_before[$n]} )); then
-          status=round_failed
-        else
+        confirmed_now=$(client_confirmed_rounds "$n"); : "${confirmed_now:=0}"
+        if (( confirmed_now > ${confirmed_before[$n]} )); then
           status=pass
+        else
+          status=$(client_refresh_outcome "$n" "$case_start")
         fi
       fi
     fi
@@ -170,12 +198,18 @@ case_refresh() {
       '{node: $node, status: $status, duration_s: $duration_s}' >> "$out"
   done
 
+  # A quote rejection is expected fee-protection behavior: counted in its
+  # own bucket, kept out of the timing percentiles (the client did no round
+  # work), and it does not fail the case.
   CASE_DETAIL=$(jq -sc '
     {clients: length,
      passed: [.[] | select(.status == "pass")] | length,
-     failed: [.[] | select(.status != "pass")] | length,
-     p50_s: (map(.duration_s) | sort | .[(length/2|floor)] // null),
-     max_s: (map(.duration_s) | max // null)}' "$out")
+     quote_rejected: [.[] | select(.status == "quote_rejected")] | length,
+     failed: [.[] | select(.status != "pass" and .status != "quote_rejected")] | length,
+     p50_s: ([.[] | select(.status == "pass") | .duration_s] | sort
+             | .[(length/2|floor)] // null),
+     max_s: ([.[] | select(.status == "pass") | .duration_s] | max // null)}' \
+    "$out")
   [[ "$(jq -r .failed <<<"$CASE_DETAIL")" == 0 ]]
 }
 

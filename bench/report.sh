@@ -44,7 +44,7 @@ jq -s --argjson w "$WINDOW" -r '
         end ) ),
   "",
   "send detail: \($cur.cases[] | select(.name == "send") | .detail | "\(.passed)/\(.sends) passed, p50 \(.p50_s)s, max \(.max_s)s")",
-  "refresh detail: \($cur.cases[] | select(.name == "refresh") | .detail | "\(.passed)/\(.clients) clients, p50 \(.p50_s)s, max \(.max_s)s")",
+  "refresh detail: \($cur.cases[] | select(.name == "refresh") | .detail | "\(.passed)/\(.clients) clients, p50 \(.p50_s)s, max \(.max_s)s\(if (.quote_rejected // 0) > 0 then ", \(.quote_rejected) fee-quote rejections" else "" end)")",
   "growth: operator \(mb($cur.delta.operator_pg_bytes)), clients \(mb($cur.delta.clients_sqlite_bytes))",
   "rounds: \($cur.rounds.rounds_confirmed) confirmed, \($cur.rounds.rounds_failed) failed, \($cur.rounds.batch_sweeps) sweeps",
   ( ($cur.capital_check // {}) as $chk

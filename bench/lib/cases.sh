@@ -24,14 +24,19 @@ one_oor_send() {
   if [[ -z "$pk" ]]; then
     status=recv_failed
   else
+    # The daemon re-drives a submit whose operator response was lost every
+    # 30s (seen live: a postgres serialization conflict burst dropped one
+    # response and the retry landed at exactly 120s). The deadline must
+    # outlast that loop, so a slow payment records as a slow pass with its
+    # true latency, not as a false failure.
     err=$(wavecli "$from" ark send oor --pubkey "$pk" \
-      --amount "$amount" --yes --timeout 120s 2>&1)
+      --amount "$amount" --yes --timeout 300s 2>&1)
     sid=$(printf '%s' "$err" | jq -r '.session_id // empty' 2>/dev/null)
     if [[ -z "$sid" ]]; then
       status=fail
     else
       status=timeout
-      local deadline=$(( $(date +%s) + 120 ))
+      local deadline=$(( $(date +%s) + 360 ))
       while (( $(date +%s) < deadline )); do
         sstat=$(wavecli "$from" ark oor get --session-id "$sid" 2>/dev/null \
           | jq -r '.session.status // .status // empty')

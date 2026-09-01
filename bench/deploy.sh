@@ -26,10 +26,20 @@ printf '%s' "$WALLET_PASSWORD" > "$CREDS/wallet.pass"
 log "starting bitcoind, postgres"
 $COMPOSE up -d wb-bitcoind wb-pg
 
+# A fresh postgres volume runs initdb, accepts connections briefly, then
+# restarts into normal operation: a single successful pg_isready during
+# that window is a lie that failed this script twice. Require two
+# consecutive successes with a gap spanning the restart.
+pg_up=0
 for _ in $(seq 1 60); do
-  docker exec wb-pg pg_isready -U lightning >/dev/null 2>&1 && break; sleep 1
+  if docker exec wb-pg pg_isready -U lightning >/dev/null 2>&1; then
+    sleep 2
+    docker exec wb-pg pg_isready -U lightning >/dev/null 2>&1 \
+      && { pg_up=1; break; }
+  fi
+  sleep 2
 done
-docker exec wb-pg pg_isready -U lightning >/dev/null || die "postgres never came up"
+(( pg_up )) || die "postgres never came up"
 
 # pg_stat_statements is preloaded via server flags but the view has to be
 # created once. Attributing an operation to the statements it waits on

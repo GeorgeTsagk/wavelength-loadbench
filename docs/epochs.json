@@ -1471,5 +1471,86 @@
       "residual_sat": 0,
       "claims_residual_sat": -1227927
     }
+  },
+  {
+    "epoch": 19,
+    "finished_at": "2026-09-01T06:17:55Z",
+    "duration_s": 33.92,
+    "versions": {
+      "lumosd": "0.1.0",
+      "waved": "0.1.1"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 12.31,
+        "db_ms": 970.5,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "failed": 0,
+          "p50_s": 1.791,
+          "max_s": 7.370,
+          "total_amount_sat": 1211540
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 19.71,
+        "db_ms": 244.4,
+        "detail": {
+          "clients": 10,
+          "passed": 7,
+          "skipped": 3,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 16,
+          "p50_s": 16.773,
+          "max_s": 17.696
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 840,
+      "operator_pg_bytes": 28179479,
+      "clients_sqlite_bytes": 314205448,
+      "client01_sqlite_bytes": 12369856,
+      "operator_mem": {
+        "mem_bytes": 101220352,
+        "mem_peak_bytes": 136163328
+      },
+      "client01_mem": {
+        "mem_bytes": 130744320,
+        "mem_peak_bytes": 369037312
+      },
+      "operator_goroutines": 1023,
+      "client01_goroutines": 1431
+    },
+    "delta": {
+      "operator_pg_bytes": 106496,
+      "clients_sqlite_bytes": 23750288
+    },
+    "capital": {
+      "deployed_sat": 198364695,
+      "spendable_sat": 11146182,
+      "live_vtxo_sat": 16150919,
+      "claims_sat": 12341338,
+      "wallet_confirmed_sat": 1417117929,
+      "fees_extracted_sat": 3849081
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "claims_residual_sat": -1195156
+    }
   }
 ]

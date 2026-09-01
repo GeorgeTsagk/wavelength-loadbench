@@ -11,7 +11,8 @@
     "rounds_confirmed": 20,
     "rounds_failed": 7,
     "batches_expired": 18,
-    "batch_sweeps": 0
+    "batch_sweeps": 9,
+    "sweeps_broadcast": 9
   },
   "boards": [],
   "cases": [

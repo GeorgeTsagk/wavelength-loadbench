@@ -413,16 +413,21 @@ pg_total_exec_ms() {
 # selftest once the network has run its first round.
 round_stats() {
   local since=$1
-  # Patterns verified against lumosd v0.1.0 live logs and source:
-  #   rounds/actor: "Round confirmed and complete", "Round failed"
-  #   batchsweeper/actor: "Batch expired", "Sweep transaction confirmed"
+  # Patterns verified against lumosd v0.1.0 LIVE LOGS, not just source.
+  # "Sweep transaction confirmed" exists in batchsweeper/actor.go but this
+  # code path never emits it: the real sequence is Broadcast -> swept
+  # notification. Grepping the source-only string made batch_sweeps read a
+  # plausible zero through v3 epoch 46+ while sweeps were happening (P4:
+  # a metric that silently reads zero is worse than a missing one).
   docker logs --since "$since" wb-lumosd 2>&1 | awk '
-    /Round confirmed and complete/ { confirmed++ }
-    /Round failed/                 { failed++ }
-    /Batch expired/                { expired++ }
-    /Sweep transaction confirmed/  { sweeps++ }
+    /Round confirmed and complete/       { confirmed++ }
+    /Round failed/                       { failed++ }
+    /Batch expired/                      { expired++ }
+    /Broadcast batch sweep transaction/  { broadcast++ }
+    /Batch swept notification received/  { sweeps++ }
     END {
       printf "{\"rounds_confirmed\":%d,\"rounds_failed\":%d,", confirmed, failed
-      printf "\"batches_expired\":%d,\"batch_sweeps\":%d}", expired, sweeps
+      printf "\"batches_expired\":%d,\"sweeps_broadcast\":%d,", expired, broadcast
+      printf "\"batch_sweeps\":%d}", sweeps
     }'
 }

@@ -13,8 +13,11 @@
 # shell (the case aggregates).
 one_oor_send() {
   local from=$1 to=$2 amount=$3 out=$4
-  local t0 t1 status pk err="" sid sstat
+  local t0 t1 status pk err="" sid sstat recv_before recv_after
   t0=$(date +%s.%N)
+  # Receiver balance before, so delivery can be verified rather than
+  # assumed from the sender's view.
+  recv_before=$(ark_balance "$to")
   # A busy receiver can miss the default 30s RPC deadline; give it a real
   # one and one retry before declaring the receiver unresponsive.
   pk=$(wavecli "$to" ark oor receive --timeout 60s 2>/dev/null \
@@ -49,6 +52,23 @@ one_oor_send() {
         esac
         sleep 0.5
       done
+
+      # The sender reaching COMPLETED does not mean the recipient got it.
+      # An incoming transfer can be dropped while the recipient has its own
+      # outgoing session in flight, leaving the value live at the operator
+      # and invisible to its owner. Poll the receiver for the credit; if it
+      # never lands the payment is undelivered, not a pass.
+      if [[ "$status" == pass && -n "$recv_before" ]]; then
+        local ddl=$(( $(date +%s) + 45 )) delivered=0
+        while (( $(date +%s) < ddl )); do
+          recv_after=$(ark_balance "$to")
+          if [[ -n "$recv_after" ]] && (( recv_after > recv_before )); then
+            delivered=1; break
+          fi
+          sleep 1
+        done
+        (( delivered )) || status=undelivered
+      fi
     fi
   fi
   t1=$(date +%s.%N)
@@ -97,6 +117,7 @@ case_send() {
   CASE_DETAIL=$(jq -sc '
     {sends: length,
      passed: [.[] | select(.status == "pass")] | length,
+     undelivered: [.[] | select(.status == "undelivered")] | length,
      failed: [.[] | select(.status != "pass")] | length,
      p50_s: ([.[] | select(.status == "pass") | .duration_s] | sort
              | .[(length/2|floor)] // null),

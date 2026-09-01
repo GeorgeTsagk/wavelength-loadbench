@@ -1,0 +1,19 @@
+{"at":"2026-09-01T13:03:07Z","config":"off-1","rep":1,"wall_s":1.24,"cpu_s":{"lumosd":1.309379,"client01":0.54917}}
+{"at":"2026-09-01T13:05:08Z","config":"off-1","rep":2,"wall_s":121.01,"cpu_s":{"lumosd":7.468719,"client01":1.025181}}
+{"at":"2026-09-01T13:05:10Z","config":"off-1","rep":3,"wall_s":1.31,"cpu_s":{"lumosd":1.79073,"client01":0.686238}}
+{"at":"2026-09-01T13:05:14Z","config":"on","rep":1,"wall_s":1.16,"cpu_s":{"lumosd":1.198795,"client01":0.490935}}
+{"at":"2026-09-01T13:05:16Z","config":"on","rep":2,"wall_s":1.40,"cpu_s":{"lumosd":1.993442,"client01":0.662232}}
+{"at":"2026-09-01T13:05:18Z","config":"on","rep":3,"wall_s":1.56,"cpu_s":{"lumosd":2.203507,"client01":0.919941}}
+{"at":"2026-09-01T13:05:23Z","config":"off-2","rep":1,"wall_s":1.26,"cpu_s":{"lumosd":1.55007,"client01":0.662091}}
+{"at":"2026-09-01T13:05:24Z","config":"off-2","rep":2,"wall_s":1.38,"cpu_s":{"lumosd":1.826781,"client01":0.885004}}
+{"at":"2026-09-01T13:05:26Z","config":"off-2","rep":3,"wall_s":1.45,"cpu_s":{"lumosd":2.06898,"client01":0.833859}}
+# Conclusion (2026-09-01, lumos v0.1.0 ba80830f / wavelength v0.1.1 dc4a6637,
+# 3 reps x 3 waves of 10 concurrent OOR sends per config):
+#   off-1: walls 1.24 / 121.01 / 1.31  (rep 2 hit the known send stall)
+#   on:    walls ~1.37 mean, lumosd cpu 1.80s, client01 cpu 0.69s
+#   off-2: walls ~1.36 mean, lumosd cpu 1.82s, client01 cpu 0.79s
+# Block rate 100000 + mutex fraction 100 + an active CPU bracket measure
+# BELOW the drift between the two off controls: overhead <1% on wall and
+# CPU. Bonus datum: the 120s send stall (operator pg serialization conflict
+# + client 30s re-drive) reproduced with profiling fully OFF, so profiling
+# is not its cause.

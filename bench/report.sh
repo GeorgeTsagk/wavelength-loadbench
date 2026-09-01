@@ -40,11 +40,11 @@ jq -s --argjson w "$WINDOW" -r '
     | ( if $c.status != "pass" then "!! \($c.name): \($c.status)"
         elif $p != null and $c.duration_s > ($p * 1.35 + 5)
         then "!! \($c.name): \($c.duration_s)s against a trend of \($p * 100 | round / 100)s"
-        else "   \($c.name): \($c.duration_s)s (trend \(if $p == null then "n/a" else ($p * 100 | round / 100 | tostring) end)s)"
+        else "   \($c.name): \($c.duration_s)s (trend \(if $p == null then "n/a" else "\($p * 100 | round / 100)s" end))"
         end ) ),
   "",
   "send detail: \($cur.cases[] | select(.name == "send") | .detail | "\(.passed)/\(.sends) passed, p50 \(.p50_s)s, max \(.max_s)s")",
-  "refresh detail: \($cur.cases[] | select(.name == "refresh") | .detail | "\(.passed)/\(.clients) refreshed (\(.vtxos_refreshed // 0) vtxos), \(.skipped // 0) nothing due, p50 \(.p50_s)s\(if (.quote_rejected // 0) > 0 then ", \(.quote_rejected) fee-quote rejections" else "" end)")",
+  "refresh detail: \($cur.cases[] | select(.name == "refresh") | .detail | "\(.passed)/\(.clients) refreshed (\(.vtxos_refreshed // 0) vtxos), \(.skipped // 0) nothing due\(if .p50_s != null then ", p50 \(.p50_s)s" else "" end)\(if (.quote_rejected // 0) > 0 then ", \(.quote_rejected) fee-quote rejections" else "" end)")",
   "growth: operator \(mb($cur.delta.operator_pg_bytes)), clients \(mb($cur.delta.clients_sqlite_bytes))",
   "rounds: \($cur.rounds.rounds_confirmed) confirmed, \($cur.rounds.rounds_failed) failed, \($cur.rounds.batch_sweeps) sweeps",
   ( ($cur.capital_check // {}) as $chk

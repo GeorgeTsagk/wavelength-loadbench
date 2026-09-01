@@ -90,12 +90,17 @@ case_send() {
     for p in "${pids[@]}"; do wait "$p" || true; done
   done
 
+  # Percentiles cover passed payments only: a timed-out payment's duration
+  # is the deadline constant, not a measurement, and it would poison the
+  # latency series. Failures stay visible through the failed count and the
+  # per-send error records.
   CASE_DETAIL=$(jq -sc '
     {sends: length,
      passed: [.[] | select(.status == "pass")] | length,
      failed: [.[] | select(.status != "pass")] | length,
-     p50_s: (map(.duration_s) | sort | .[(length/2|floor)] // null),
-     max_s: (map(.duration_s) | max // null),
+     p50_s: ([.[] | select(.status == "pass") | .duration_s] | sort
+             | .[(length/2|floor)] // null),
+     max_s: ([.[] | select(.status == "pass") | .duration_s] | max // null),
      total_amount_sat: ([.[] | select(.status == "pass") | .amount] | add // 0)}' \
     "$out")
   [[ "$(jq -r .failed <<<"$CASE_DETAIL")" == 0 ]]
@@ -107,13 +112,6 @@ client_round_active() {
     [.rounds[]? | select(.state != "ROUND_STATE_CONFIRMED"
                      and .state != "ROUND_STATE_FAILED")] | length > 0' \
     >/dev/null 2>&1
-}
-
-# True if any of the client's rounds ended failed in this window (round ids
-# seen before the case are excluded by the caller via a baseline count).
-client_failed_rounds() {
-  wavecli "$1" ark rounds list 2>/dev/null | jq -r '
-    [.rounds[]? | select(.state == "ROUND_STATE_FAILED")] | length' 2>/dev/null
 }
 
 # Count of the client's confirmed rounds. A refresh only counts as a pass
@@ -287,10 +285,14 @@ ensure_boarded() {
       fi
     fi
     t1=$(date +%s.%N)
+    # The deposit amount is recorded per board rather than assumed from
+    # config, so the deposited-capital ledger stays exact even if
+    # BOARD_AMOUNT is retuned mid-series.
     boarded=$(jq -cn --argjson acc "$boarded" --arg n "$n" --arg s "$status" \
-      --argjson bal "$bal" \
+      --argjson bal "$bal" --argjson amt "$BOARD_AMOUNT" \
       --argjson d "$(awk -v a="$t0" -v b="$t1" 'BEGIN{printf "%.1f", b-a}')" \
-      '$acc + [{node: $n, status: $s, balance_before_sat: $bal, duration_s: $d}]')
+      '$acc + [{node: $n, status: $s, amount_sat: $amt,
+                balance_before_sat: $bal, duration_s: $d}]')
     [[ "$status" == pass ]] || log "  WARNING: boarding $n: $status"
   done
   BOARD_DETAIL="$boarded"

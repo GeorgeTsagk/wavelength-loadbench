@@ -158,8 +158,9 @@ log "operator rounds this epoch: $(printf '%s' "$ROUNDS" | jq -c .)"
 PREV_DEPOSITED=$(tail -n 1 "$DATA" 2>/dev/null \
   | jq -r '.capital_check.deposited_cum_sat // empty')
 [[ -n "$PREV_DEPOSITED" ]] || PREV_DEPOSITED=$DEPOSITED_BOOTSTRAP_SAT
-BOARDS_OK=$(jq '[.[] | select(.status == "pass")] | length' <<<"$BOARD_DETAIL")
-DEPOSITED=$(( PREV_DEPOSITED + BOARDS_OK * BOARD_AMOUNT ))
+BOARDS_SAT=$(jq '[.[] | select(.status == "pass") | .amount_sat] | add // 0' \
+  <<<"$BOARD_DETAIL")
+DEPOSITED=$(( PREV_DEPOSITED + BOARDS_SAT ))
 CAPITAL_CHECK=$(jq -cn --argjson dep "$DEPOSITED" --argjson a "$AFTER" '
   ($a.capital.clients_spendable_sat) as $sp |
   ($a.capital.clients_pending_in_sat) as $pi |

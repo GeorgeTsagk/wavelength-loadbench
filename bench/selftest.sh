@@ -17,7 +17,7 @@ REQUIRED=(die log btc lnd lumoscli wavecli mine mine_synced mine_until
           capture_profiles capture_all cpu_profile_start cpu_profile_stop
           case_cpu pg_stat_reset pg_stat_top pg_total_exec_ms round_stats
           one_oor_send case_send case_refresh client_round_active
-          client_failed_rounds client_confirmed_rounds client_refresh_outcome
+          client_confirmed_rounds client_refresh_outcome
           refresh_eligible_outpoints
           ensure_boarded board_done)
 missing=()

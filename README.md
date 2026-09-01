@@ -2,11 +2,17 @@
 
 A growth benchmark for the Wavelength / Ark stack: one `lumosd` operator and
 ten `waved` clients on a regtest network that is **never reset**, where the
-chain only advances when the harness mines. One epoch runs every 3 hours: 30
-random client-to-client OOR payments (3 waves of 10, all clients sending
-concurrently) and one all-client refresh round. The series measures what the
-same work costs as the operator's round history, indexer, mailbox and the
-clients' sqlite stores accumulate real volume.
+chain advances at mainnet pace (18 blocks per 3-hour epoch, mined only by
+the harness, so the 1008-block batch expiry arrives after about one real
+week). One epoch runs every 3 hours: 30 random client-to-client OOR
+payments of 25-100k sat (3 waves of 10, all clients sending concurrently)
+and a wallet-realistic selective refresh: each client refreshes only vtxos
+near their batch expiry or with a deep OOR lineage, and skips when nothing
+is due. Every epoch also checks capital conservation exactly: deposited ==
+user spendable + pending + operator fees, with any non-zero residual
+flagged. The series measures what the same work costs as the operator's
+round history, indexer, mailbox and the clients' sqlite stores accumulate
+real volume.
 
 Built from the playbook distilled out of
 [tapd-loadbench](https://github.com/GeorgeTsagk/tapd-loadbench).
@@ -26,6 +32,10 @@ the snapshot page.
 - **Growth**: operator postgres size and per-table breakdown, per-client
   sqlite footprint including WAL and its checkpoint backlog, memory high
   water marks, goroutine counts.
+- **Capital**: the operator's double-entry ledger (deployed capital, fee
+  revenue by type, treasury flow), TVL by vtxo status, the per-epoch
+  conservation residual, and the lock ratio (capital locked in unexpired
+  batches per sat of user-owned capital).
 - **Passive**: operator round lifecycle and batch sweeper activity from the
   epoch's log window.
 

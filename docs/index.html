@@ -191,12 +191,14 @@
       <a href="nodes.html">bottleneck snapshot</a></span>
     <h1>Wavelength Growth Bench</h1>
     <p class="lede">One operator (<code>lumosd</code>, postgres) and ten clients
-      (<code>waved</code>, lwwallet on sqlite) on a regtest chain that only advances
-      when the harness mines. Every epoch runs 30 random client-to-client OOR
-      payments and one all-client refresh round, on top of everything prior epochs
-      created. The question is not how fast the stack is on a clean network, but
-      what the same payments and rounds cost once the operator's round history,
-      indexer and mailbox have real volume in them.</p>
+      (<code>waved</code>, lwwallet on sqlite) on a regtest chain that advances at
+      mainnet pace: 18 blocks per 3-hour epoch, mined only by the harness. Every
+      epoch runs 30 random client-to-client OOR payments (25&ndash;100k sat) and a
+      wallet-realistic refresh of whatever is due (near batch expiry or deep OOR
+      lineage), on top of everything prior epochs created. The question is not how
+      fast the stack is on a clean network, but what the same payments and rounds
+      cost once the operator's round history, indexer and mailbox have real volume
+      in them.</p>
     <div class="meta" id="meta"></div>
   </header>
 

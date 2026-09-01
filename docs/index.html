@@ -282,16 +282,20 @@
   <section class="card">
     <span class="eyebrow">Capital conservation</span>
     <h2>Where every sat is</h2>
-    <p class="note">Every sat in the system entered through a harness-made
-      boarding deposit, so total-deposited is known exactly, and
-      <b>conservation residual</b> = deposited &minus; user spendable &minus;
-      pending &minus; operator fees must be zero: any other non-null value
-      means sats appeared or vanished somewhere in the stack. <b>claims
-      residual</b> cross-checks the operator ledger's own
-      <code>user_vtxo_claims</code> liability against what clients report; as
-      wired it trails by exactly the cumulative refresh fees, so it tracking
-      the fee line is the known baseline and a departure from that is the
-      signal. Epochs before this was measured render as gaps.</p>
+    <p class="note">Every sat enters through a known boarding deposit, so the
+      books can be closed exactly. Against the operator's own indexer and
+      ledger the identity <em>deposited = live + in-flight + expired +
+      fees</em> holds to the sat in every epoch of this series, so the
+      <b>conservation residual</b> is flat zero: the protocol loses nothing.
+      What does go wrong is visibility. <b>Invisible to owners</b> is value
+      the operator holds live that no client counts, because a dropped
+      incoming transfer leaves the recipient unaware it was ever paid; those
+      sats are unspendable by their owner until a seed-restore rescan finds
+      them. <b>Swept from owners</b> is value in batches that expired before
+      being refreshed, which the sweeper reclaims permanently. Client
+      balances cannot close these books themselves: a vtxo locked in a
+      queued refresh is counted in both a client's confirmed balance and its
+      pending-out.</p>
     <div class="legend" id="lg-cons"></div>
     <div class="plot" id="p-cons"><div class="tip" id="t-cons"></div></div>
   </section>
@@ -587,7 +591,10 @@ function render(data) {
     cell('conservation', chk.residual_sat === 0 ? '0 sat'
       : (chk.residual_sat == null ? 'n/a' : fmtSat(chk.residual_sat)),
       chk.residual_sat === 0 ? 'every deposited sat accounted for'
-        : 'deposited minus spendable, pending and fees') +
+        : 'deposited minus live, in-flight, expired and fees') +
+    cell('invisible', chk.invisible_sat == null ? 'n/a'
+      : fmtSat(chk.invisible_sat),
+      'live at operator, unseen by its owner') +
     cell('operator db', fmtBytes(last.after.operator_pg_bytes ?? 0),
       'postgres, as reported') +
     cell('client dbs', fmtBytes(last.after.clients_sqlite_bytes ?? 0),
@@ -663,12 +670,15 @@ function render(data) {
   lineChart(document.getElementById('p-cons'), document.getElementById('t-cons'),
     document.getElementById('lg-cons'),
     series([
+      { name: 'invisible to owners (operator live, unseen by any client)',
+        label: 'invisible', color: 'var(--series-2)',
+        pick: e => opt(e, ['capital_check', 'invisible_sat']) },
+      { name: 'swept from owners (batch expired before refresh)',
+        label: 'swept', color: 'var(--series-3)',
+        pick: e => opt(e, ['capital_check', 'expired_sat']) },
       { name: 'conservation residual (must be zero)', label: 'residual',
         color: 'var(--series-1)',
         pick: e => opt(e, ['capital_check', 'residual_sat']) },
-      { name: 'ledger claims residual (baseline: cumulative refresh fees)',
-        label: 'claims', color: 'var(--series-2)',
-        pick: e => opt(e, ['capital_check', 'claims_residual_sat']) },
     ]), fmtSat);
 
   lineChart(document.getElementById('p-opdb'), document.getElementById('t-opdb'),

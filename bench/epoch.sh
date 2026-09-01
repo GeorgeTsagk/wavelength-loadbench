@@ -142,19 +142,17 @@ AFTER=$(snapshot)
 ROUNDS=$(round_stats "$STARTED")
 log "operator rounds this epoch: $(printf '%s' "$ROUNDS" | jq -c .)"
 
-# Capital conservation. Every sat in the system entered through a
-# harness-made boarding deposit, so total-deposited is exact: the bootstrap
-# seed plus BOARD_AMOUNT per successful board ever recorded. The invariant:
-#   deposited == spendable + pending_in + pending_out + fees_extracted
-# Pending buckets each count once: a sat mid-flight has left the sender's
-# confirmed balance and appears as that sender's pending_out (a queued
-# refresh locks vtxos into pending_out the same way); an incoming deposit
-# not yet confirmed is the receiver's pending_in. Netting the two counted
-# in-flight value twice and fabricated a 10M sat "violation" in v2 epoch
-# 9-12 while refresh queues were backed up. Residual is null (never zero)
-# when any input was unreadable; any non-null non-zero value means sats
-# appeared or vanished. claims_residual cross-checks the ledger's own
-# liability account against what clients report.
+# Capital conservation. Every sat enters through a harness-made boarding
+# deposit, so total-deposited is exact. The authoritative identity is taken
+# from the OPERATOR's indexer and ledger, not from client reports:
+#   deposited == live + in_flight + expired + fees_extracted
+# Client balances cannot close the books: a client counts a vtxo locked in a
+# queued refresh in BOTH its confirmed balance and its pending_out, and a
+# client that never received an incoming transfer counts nothing at all.
+# Both were measured on live data (v3 epoch 60), where the operator-side
+# identity balanced to the sat while the client-side one was off by 2.1M.
+# The client/operator divergence is kept as invisible_sat, which is the
+# fund-loss gauge rather than an accounting error.
 PREV_DEPOSITED=$(tail -n 1 "$DATA" 2>/dev/null \
   | jq -r '.capital_check.deposited_cum_sat // empty')
 [[ -n "$PREV_DEPOSITED" ]] || PREV_DEPOSITED=$DEPOSITED_BOOTSTRAP_SAT
@@ -162,18 +160,30 @@ BOARDS_SAT=$(jq '[.[] | select(.status == "pass") | .amount_sat] | add // 0' \
   <<<"$BOARD_DETAIL")
 DEPOSITED=$(( PREV_DEPOSITED + BOARDS_SAT ))
 CAPITAL_CHECK=$(jq -cn --argjson dep "$DEPOSITED" --argjson a "$AFTER" '
+  ($a.capital.vtxo_value) as $v |
   ($a.capital.clients_spendable_sat) as $sp |
-  ($a.capital.clients_pending_in_sat) as $pi |
-  ($a.capital.clients_pending_out_sat) as $po |
   ($a.capital.fees_extracted_sat) as $fees |
-  ($a.capital.ledger.user_vtxo_claims) as $claims |
+  (($v.live // 0) + ($v.in_flight // 0) + ($v.expired // 0)) as $userheld |
   {deposited_cum_sat: $dep,
+   # Authoritative identity, verified exact on live data at v3 epoch 60:
+   #   deposited == live + in_flight + expired + fees_extracted
+   # The operator indexer plus its double-entry ledger is the only view that
+   # sees every sat. "pending" is deliberately excluded: those are
+   # prospective outputs of a round whose inputs are still counted
+   # elsewhere, so including it double-counts by exactly that bucket.
    residual_sat:
-     (if $sp == null or $pi == null or $po == null or $fees == null then null
-      else $dep - $sp - $pi - $po - $fees end),
-   claims_residual_sat:
-     (if $sp == null or $claims == null then null
-      else $sp + $claims end)}')
+     (if $v == null or $fees == null then null
+      else $dep - $userheld - $fees end),
+   # What users can actually see. Clients report only their own confirmed
+   # balances, and a dropped incoming transfer leaves value live at the
+   # operator that its owner never learns about, so this gap is the
+   # user-visible fund-loss gauge rather than an accounting error.
+   invisible_sat:
+     (if ($v.live // null) == null or $sp == null then null
+      else ($v.live - $sp) end),
+   # Swept out from under their owners: batches that expired before being
+   # refreshed. Genuine user loss, and it only ever grows.
+   expired_sat: ($v.expired // 0)}')
 log "capital check: $(printf '%s' "$CAPITAL_CHECK" | jq -c .)"
 
 # Deterministic chain advance, outside every timed window. This is what

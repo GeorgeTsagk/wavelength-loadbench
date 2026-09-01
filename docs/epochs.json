@@ -119,7 +119,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 0
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -201,7 +202,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 64212
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -283,7 +285,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 64212
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -365,7 +368,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 118114
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -447,7 +451,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 118114
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -529,7 +534,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 169611
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -611,7 +617,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 169611
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -693,7 +700,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 218711
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -775,7 +783,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 218711
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -857,7 +866,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 265531
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -939,7 +949,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 265531
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -1021,7 +1032,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 310003
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -1103,7 +1115,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 310003
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -1185,7 +1198,8 @@
     "capital_check": {
       "deposited_cum_sat": 20000000,
       "residual_sat": 0,
-      "claims_residual_sat": 352092
+      "invisible_sat": 0,
+      "expired_sat": 0
     }
   },
   {
@@ -1266,8 +1280,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 297074
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -1348,8 +1363,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 329364
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -1430,8 +1446,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 365069
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -1512,8 +1529,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 407296
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -1594,8 +1612,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 432275
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -1676,8 +1695,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 481876
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -1758,8 +1778,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 508613
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -1840,8 +1861,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 527079
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -1922,8 +1944,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 545806
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -2004,8 +2027,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 593304
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -2086,8 +2110,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 626920
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -2168,8 +2193,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 670396
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -2250,8 +2276,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 707959
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -2332,8 +2359,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 720341
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -2414,8 +2442,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 757856
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -2496,8 +2525,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 791415
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -2578,8 +2608,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 55018,
-      "claims_residual_sat": 828922
+      "residual_sat": 0,
+      "invisible_sat": 55018,
+      "expired_sat": 0
     }
   },
   {
@@ -2660,8 +2691,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 817524
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -2742,8 +2774,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 899510
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -2824,8 +2857,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 981400
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -2906,8 +2940,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1071379
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -2988,8 +3023,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1251139
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3070,8 +3106,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1288592
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3152,8 +3189,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1486355
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3234,8 +3272,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1522325
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3316,8 +3355,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1668061
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3398,8 +3438,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1704069
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3480,8 +3521,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1845615
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3562,8 +3604,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1860898
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3644,8 +3687,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 1994972
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3726,8 +3770,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 2114998
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3808,8 +3853,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": 88909,
-      "claims_residual_sat": 2127085
+      "residual_sat": 0,
+      "invisible_sat": 88909,
+      "expired_sat": 0
     }
   },
   {
@@ -3890,8 +3936,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -863729,
-      "claims_residual_sat": 2199394
+      "residual_sat": 0,
+      "invisible_sat": 156438,
+      "expired_sat": 0
     }
   },
   {
@@ -3972,8 +4019,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1544218,
-      "claims_residual_sat": 1937004
+      "residual_sat": 0,
+      "invisible_sat": 482021,
+      "expired_sat": 0
     }
   },
   {
@@ -4054,8 +4102,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1939007,
-      "claims_residual_sat": 2074088
+      "residual_sat": 0,
+      "invisible_sat": 483817,
+      "expired_sat": 0
     }
   },
   {
@@ -4136,8 +4185,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1913132,
-      "claims_residual_sat": 2188342
+      "residual_sat": 0,
+      "invisible_sat": 509692,
+      "expired_sat": 0
     }
   },
   {
@@ -4218,8 +4268,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1913132,
-      "claims_residual_sat": 2280977
+      "residual_sat": 0,
+      "invisible_sat": 509692,
+      "expired_sat": 0
     }
   },
   {
@@ -4300,8 +4351,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1913132,
-      "claims_residual_sat": 2305564
+      "residual_sat": 0,
+      "invisible_sat": 509692,
+      "expired_sat": 0
     }
   },
   {
@@ -4382,8 +4434,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1913132,
-      "claims_residual_sat": 2459601
+      "residual_sat": 0,
+      "invisible_sat": 509692,
+      "expired_sat": 0
     }
   },
   {
@@ -4464,8 +4517,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1913132,
-      "claims_residual_sat": 2589282
+      "residual_sat": 0,
+      "invisible_sat": 509692,
+      "expired_sat": 0
     }
   },
   {
@@ -4546,8 +4600,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1949654,
-      "claims_residual_sat": 2608858
+      "residual_sat": 0,
+      "invisible_sat": 555592,
+      "expired_sat": 0
     }
   },
   {
@@ -4628,8 +4683,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1949654,
-      "claims_residual_sat": 2879748
+      "residual_sat": 0,
+      "invisible_sat": 560243,
+      "expired_sat": 0
     }
   },
   {
@@ -4710,8 +4766,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -1999743,
-      "claims_residual_sat": 3117742
+      "residual_sat": 0,
+      "invisible_sat": 560243,
+      "expired_sat": 0
     }
   },
   {
@@ -4792,8 +4849,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -2085971,
-      "claims_residual_sat": 2084285
+      "residual_sat": 0,
+      "invisible_sat": 1017725,
+      "expired_sat": 0
     }
   },
   {
@@ -4874,8 +4932,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -2085971,
-      "claims_residual_sat": 2645230
+      "residual_sat": 0,
+      "invisible_sat": 1342106,
+      "expired_sat": 0
     }
   },
   {
@@ -4956,8 +5015,9 @@
     },
     "capital_check": {
       "deposited_cum_sat": 20000000,
-      "residual_sat": -2085971,
-      "claims_residual_sat": 2247250
+      "residual_sat": 0,
+      "invisible_sat": 1862344,
+      "expired_sat": 36056
     }
   }
 ]

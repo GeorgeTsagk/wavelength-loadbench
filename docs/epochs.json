@@ -5019,5 +5019,89 @@
       "invisible_sat": 1862344,
       "expired_sat": 36056
     }
+  },
+  {
+    "epoch": 61,
+    "finished_at": "2026-09-01T18:26:54Z",
+    "duration_s": 570.14,
+    "versions": {
+      "lumosd": "0.1.0",
+      "waved": "0.1.1"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "fail",
+        "duration_s": 140.40,
+        "db_ms": 1955.8,
+        "detail": {
+          "sends": 30,
+          "passed": 24,
+          "undelivered": 6,
+          "failed": 6,
+          "p50_s": 1.831,
+          "max_s": 4.647,
+          "total_amount_sat": 1020197
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "fail",
+        "duration_s": 427.60,
+        "db_ms": 3091.2,
+        "detail": {
+          "clients": 10,
+          "passed": 7,
+          "skipped": 1,
+          "quote_rejected": 0,
+          "failed": 2,
+          "vtxos_refreshed": 25,
+          "p50_s": 20.942,
+          "max_s": 22.109
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 9,
+      "rounds_failed": 1,
+      "batches_expired": 18,
+      "sweeps_broadcast": 9,
+      "batch_sweeps": 9
+    },
+    "after": {
+      "block_height": 2074,
+      "operator_pg_bytes": 43170839,
+      "clients_sqlite_bytes": 279627704,
+      "client01_sqlite_bytes": 19597048,
+      "operator_mem": {
+        "mem_bytes": 153268224,
+        "mem_peak_bytes": 183103488
+      },
+      "client01_mem": {
+        "mem_bytes": 185860096,
+        "mem_peak_bytes": 370290688
+      },
+      "operator_goroutines": 3322,
+      "client01_goroutines": 1247
+    },
+    "delta": {
+      "operator_pg_bytes": 319488,
+      "clients_sqlite_bytes": 28335856
+    },
+    "capital": {
+      "deployed_sat": 125239751,
+      "spendable_sat": 12798269,
+      "live_vtxo_sat": 14077731,
+      "claims_sat": 9813518,
+      "wallet_confirmed_sat": 1597831478,
+      "fees_extracted_sat": 5112991
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 1279462,
+      "expired_sat": 809278
+    }
   }
 ]

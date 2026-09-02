@@ -5612,5 +5612,94 @@
       "invisible_sat": 2460544,
       "expired_sat": 3122610
     }
+  },
+  {
+    "epoch": 68,
+    "finished_at": "2026-09-02T15:27:21Z",
+    "duration_s": 581.24,
+    "versions": {
+      "lumosd": "0.1.0",
+      "waved": "0.1.1"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "fail",
+        "duration_s": 142.81,
+        "db_ms": 2359.5,
+        "detail": {
+          "sends": 30,
+          "passed": 26,
+          "undelivered": 4,
+          "failed": 4,
+          "p50_s": 3.860,
+          "max_s": 7.098,
+          "total_amount_sat": 1109804
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "fail",
+        "duration_s": 435.93,
+        "db_ms": 3715.6,
+        "detail": {
+          "clients": 10,
+          "passed": 0,
+          "skipped": 0,
+          "quote_rejected": 2,
+          "failed": 8,
+          "vtxos_refreshed": 0,
+          "p50_s": null,
+          "max_s": null
+        }
+      }
+    ],
+    "boards": [
+      {
+        "node": "wb-client04",
+        "status": "pass"
+      }
+    ],
+    "rounds": {
+      "rounds_confirmed": 12,
+      "rounds_failed": 14,
+      "batches_expired": 14,
+      "sweeps_broadcast": 7,
+      "batch_sweeps": 7
+    },
+    "after": {
+      "block_height": 3229,
+      "operator_pg_bytes": 52583447,
+      "clients_sqlite_bytes": 912997048,
+      "client01_sqlite_bytes": 56053248,
+      "operator_mem": {
+        "mem_bytes": 191549440,
+        "mem_peak_bytes": 233033728
+      },
+      "client01_mem": {
+        "mem_bytes": 275144704,
+        "mem_peak_bytes": 404217856
+      },
+      "operator_goroutines": 4296,
+      "client01_goroutines": 2086
+    },
+    "delta": {
+      "operator_pg_bytes": 1179648,
+      "clients_sqlite_bytes": 129972056
+    },
+    "capital": {
+      "deployed_sat": 142429061,
+      "spendable_sat": 9763237,
+      "live_vtxo_sat": 12883212,
+      "claims_sat": 8390211,
+      "wallet_confirmed_sat": 1230971947,
+      "fees_extracted_sat": 7826563
+    },
+    "capital_check": {
+      "deposited_cum_sat": 24000000,
+      "residual_sat": 0,
+      "invisible_sat": 3119975,
+      "expired_sat": 3274239
+    }
   }
 ]

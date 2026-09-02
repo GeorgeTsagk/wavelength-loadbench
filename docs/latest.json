@@ -1,6 +1,6 @@
 {
-  "epoch": 69,
-  "finished_at": "2026-09-02T18:32:27Z",
+  "epoch": 70,
+  "finished_at": "2026-09-02T21:42:13Z",
   "versions": {
     "lumosd": "0.1.0",
     "waved": "0.1.1",
@@ -8,45 +8,50 @@
     "wavelength_rev": "dc4a6637"
   },
   "rounds": {
-    "rounds_confirmed": 8,
-    "rounds_failed": 18,
-    "batches_expired": 28,
-    "sweeps_broadcast": 14,
+    "rounds_confirmed": 10,
+    "rounds_failed": 14,
+    "batches_expired": 30,
+    "sweeps_broadcast": 15,
     "batch_sweeps": 15
   },
   "boards": [
     {
-      "node": "wb-client06",
-      "status": "pass",
-      "duration_s": 22.5
+      "node": "wb-client02",
+      "status": "timeout",
+      "duration_s": 303.2
     },
     {
       "node": "wb-client07",
       "status": "timeout",
-      "duration_s": 302.9
+      "duration_s": 303.2
+    },
+    {
+      "node": "wb-client10",
+      "status": "timeout",
+      "duration_s": 302.8
     }
   ],
   "cases": [
     {
       "name": "send",
       "status": "fail",
-      "duration_s": 146.93,
-      "db_ms": 1806.6,
+      "duration_s": 149.49,
+      "db_ms": 1788.1,
       "detail": {
         "sends": 30,
-        "passed": 25,
-        "undelivered": 5,
-        "failed": 5,
-        "p50_s": 2.761,
-        "max_s": 5.382,
-        "total_amount_sat": 1039934
+        "passed": 20,
+        "undelivered": 7,
+        "failed": 10,
+        "p50_s": 4.409,
+        "max_s": 8.578,
+        "total_amount_sat": 891528
       }
     },
     {
       "name": "refresh",
       "status": "fail",
-      "duration_s": 428.55,
-      "db_ms": 3154.8,
+      "duration_s": 427.14,
+      "db_ms": 3394.4,
       "detail": {
         "clients": 10,
         "passed": 0,
@@ -61,11 +66,11 @@
   ],
   "clients": {
     "wb-client01": {
-      "balance_sat": 413468,
-      "live_vtxos": 49,
-      "goroutines": 2360,
-      "heap_bytes": 259801088,
-      "sqlite_bytes": 76144128,
+      "balance_sat": 344359,
+      "live_vtxos": 40,
+      "goroutines": 2560,
+      "heap_bytes": 369532928,
+      "sqlite_bytes": 116133376,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -73,11 +78,11 @@
       }
     },
     "wb-client02": {
-      "balance_sat": 298213,
-      "live_vtxos": 42,
-      "goroutines": 2784,
-      "heap_bytes": 560570368,
-      "sqlite_bytes": 122203328,
+      "balance_sat": 13738,
+      "live_vtxos": 5,
+      "goroutines": 3107,
+      "heap_bytes": 850362368,
+      "sqlite_bytes": 197258152,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -85,11 +90,11 @@
       }
     },
     "wb-client03": {
-      "balance_sat": 860470,
-      "live_vtxos": 90,
-      "goroutines": 2866,
-      "heap_bytes": 696451072,
-      "sqlite_bytes": 160674928,
+      "balance_sat": 469483,
+      "live_vtxos": 54,
+      "goroutines": 3248,
+      "heap_bytes": 1013760000,
+      "sqlite_bytes": 223890712,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -97,11 +102,11 @@
       }
     },
     "wb-client04": {
-      "balance_sat": 2437224,
-      "live_vtxos": 56,
-      "goroutines": 2021,
-      "heap_bytes": 153149440,
-      "sqlite_bytes": 49925776,
+      "balance_sat": 2162635,
+      "live_vtxos": 37,
+      "goroutines": 2225,
+      "heap_bytes": 216842240,
+      "sqlite_bytes": 74308176,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -109,11 +114,11 @@
       }
     },
     "wb-client05": {
-      "balance_sat": 2107946,
-      "live_vtxos": 52,
-      "goroutines": 2004,
-      "heap_bytes": 322338816,
-      "sqlite_bytes": 81950808,
+      "balance_sat": 1877128,
+      "live_vtxos": 42,
+      "goroutines": 2221,
+      "heap_bytes": 492650496,
+      "sqlite_bytes": 121375848,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -121,11 +126,11 @@
       }
     },
     "wb-client06": {
-      "balance_sat": 2249329,
-      "live_vtxos": 37,
-      "goroutines": 2613,
-      "heap_bytes": 444719104,
-      "sqlite_bytes": 155087136,
+      "balance_sat": 2060219,
+      "live_vtxos": 30,
+      "goroutines": 2722,
+      "heap_bytes": 673251328,
+      "sqlite_bytes": 230474392,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -133,11 +138,11 @@
       }
     },
     "wb-client07": {
-      "balance_sat": 66727,
-      "live_vtxos": 8,
+      "balance_sat": 112510,
+      "live_vtxos": 7,
       "goroutines": 3487,
-      "heap_bytes": 933265408,
-      "sqlite_bytes": 252198384,
+      "heap_bytes": 1513799680,
+      "sqlite_bytes": 363425264,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -145,11 +150,11 @@
       }
     },
     "wb-client08": {
-      "balance_sat": 792504,
-      "live_vtxos": 80,
-      "goroutines": 1938,
-      "heap_bytes": 226172928,
-      "sqlite_bytes": 65641800,
+      "balance_sat": 410893,
+      "live_vtxos": 44,
+      "goroutines": 2264,
+      "heap_bytes": 335732736,
+      "sqlite_bytes": 89540760,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -157,11 +162,11 @@
       }
     },
     "wb-client09": {
-      "balance_sat": 883390,
-      "live_vtxos": 85,
-      "goroutines": 2457,
-      "heap_bytes": 649347072,
-      "sqlite_bytes": 136998192,
+      "balance_sat": 704417,
+      "live_vtxos": 70,
+      "goroutines": 2730,
+      "heap_bytes": 813309952,
+      "sqlite_bytes": 195426984,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -169,11 +174,11 @@
       }
     },
     "wb-client10": {
-      "balance_sat": 425994,
-      "live_vtxos": 56,
-      "goroutines": 2287,
-      "heap_bytes": 400375808,
-      "sqlite_bytes": 96795872,
+      "balance_sat": 161974,
+      "live_vtxos": 28,
+      "goroutines": 2580,
+      "heap_bytes": 447168512,
+      "sqlite_bytes": 157942864,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -182,8 +187,8 @@
     }
   },
   "operator": {
-    "pg_total": 53910551,
-    "goroutines": 4357,
-    "heap_bytes": 142671872
+    "pg_total": 56089623,
+    "goroutines": 4591,
+    "heap_bytes": 139427840
   }
 }

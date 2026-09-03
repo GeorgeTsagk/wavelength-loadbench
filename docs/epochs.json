@@ -291,5 +291,1013 @@
       "invisible_sat": 0,
       "expired_sat": 0
     }
+  },
+  {
+    "epoch": 4,
+    "finished_at": "2026-09-03T13:12:06Z",
+    "duration_s": 35.34,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 12.07,
+        "db_ms": 815.3,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "undelivered": 0,
+          "failed": 0,
+          "p50_s": 1.892,
+          "max_s": 7.082,
+          "total_amount_sat": 1261923
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 21.71,
+        "db_ms": 190.3,
+        "detail": {
+          "clients": 10,
+          "passed": 10,
+          "skipped": 0,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 20,
+          "p50_s": 15.967,
+          "max_s": 19.544
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 234,
+      "operator_pg_bytes": 14998551,
+      "clients_sqlite_bytes": 69014208,
+      "client01_sqlite_bytes": 5910784,
+      "operator_mem": {
+        "mem_bytes": 53248000,
+        "mem_peak_bytes": 70672384
+      },
+      "client01_mem": {
+        "mem_bytes": 52224000,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 372,
+      "client01_goroutines": 201
+    },
+    "delta": {
+      "operator_pg_bytes": 1499136,
+      "clients_sqlite_bytes": 8024552
+    },
+    "capital": {
+      "deployed_sat": 52997463,
+      "spendable_sat": 19882154,
+      "live_vtxo_sat": 19882154,
+      "claims_sat": 19803808,
+      "wallet_confirmed_sat": 1566899895,
+      "fees_extracted_sat": 117846
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 5,
+    "finished_at": "2026-09-03T13:13:36Z",
+    "duration_s": 71.40,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "fail",
+        "duration_s": 67.70,
+        "db_ms": 845.3,
+        "detail": {
+          "sends": 30,
+          "passed": 29,
+          "undelivered": 1,
+          "failed": 1,
+          "p50_s": 1.859,
+          "max_s": 62.696,
+          "total_amount_sat": 1254092
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 2.16,
+        "db_ms": 1.5,
+        "detail": {
+          "clients": 10,
+          "passed": 0,
+          "skipped": 10,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 0,
+          "p50_s": null,
+          "max_s": null
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 0,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 252,
+      "operator_pg_bytes": 14621719,
+      "clients_sqlite_bytes": 77514024,
+      "client01_sqlite_bytes": 6116208,
+      "operator_mem": {
+        "mem_bytes": 58630144,
+        "mem_peak_bytes": 71925760
+      },
+      "client01_mem": {
+        "mem_bytes": 56311808,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 372,
+      "client01_goroutines": 249
+    },
+    "delta": {
+      "operator_pg_bytes": -376832,
+      "clients_sqlite_bytes": 8335016
+    },
+    "capital": {
+      "deployed_sat": 52997463,
+      "spendable_sat": 19882154,
+      "live_vtxo_sat": 19882154,
+      "claims_sat": 19803808,
+      "wallet_confirmed_sat": 1566899895,
+      "fees_extracted_sat": 117846
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 6,
+    "finished_at": "2026-09-03T13:14:26Z",
+    "duration_s": 31.74,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 8.62,
+        "db_ms": 827.2,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "undelivered": 0,
+          "failed": 0,
+          "p50_s": 1.890,
+          "max_s": 3.045,
+          "total_amount_sat": 1233700
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 21.54,
+        "db_ms": 191.3,
+        "detail": {
+          "clients": 10,
+          "passed": 10,
+          "skipped": 0,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 20,
+          "p50_s": 15.226,
+          "max_s": 19.789
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 274,
+      "operator_pg_bytes": 14842903,
+      "clients_sqlite_bytes": 92825360,
+      "client01_sqlite_bytes": 6103432,
+      "operator_mem": {
+        "mem_bytes": 54444032,
+        "mem_peak_bytes": 73424896
+      },
+      "client01_mem": {
+        "mem_bytes": 54939648,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 371,
+      "client01_goroutines": 256
+    },
+    "delta": {
+      "operator_pg_bytes": 221184,
+      "clients_sqlite_bytes": 15195976
+    },
+    "capital": {
+      "deployed_sat": 65643397,
+      "spendable_sat": 19850528,
+      "live_vtxo_sat": 19850528,
+      "claims_sat": 19740556,
+      "wallet_confirmed_sat": 1554210187,
+      "fees_extracted_sat": 149472
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 7,
+    "finished_at": "2026-09-03T13:19:54Z",
+    "duration_s": 307.70,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "fail",
+        "duration_s": 303.95,
+        "db_ms": 746.2,
+        "detail": {
+          "sends": 30,
+          "passed": 25,
+          "undelivered": 2,
+          "failed": 5,
+          "p50_s": 1.787,
+          "max_s": 3.072,
+          "total_amount_sat": 1029578
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 2.14,
+        "db_ms": 2.7,
+        "detail": {
+          "clients": 10,
+          "passed": 0,
+          "skipped": 10,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 0,
+          "p50_s": null,
+          "max_s": null
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 0,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 292,
+      "operator_pg_bytes": 15580183,
+      "clients_sqlite_bytes": 104915248,
+      "client01_sqlite_bytes": 6197640,
+      "operator_mem": {
+        "mem_bytes": 59703296,
+        "mem_peak_bytes": 73424896
+      },
+      "client01_mem": {
+        "mem_bytes": 59203584,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 359,
+      "client01_goroutines": 296
+    },
+    "delta": {
+      "operator_pg_bytes": 737280,
+      "clients_sqlite_bytes": 11550936
+    },
+    "capital": {
+      "deployed_sat": 65643397,
+      "spendable_sat": 19897366,
+      "live_vtxo_sat": 19850528,
+      "claims_sat": 19740556,
+      "wallet_confirmed_sat": 1554210187,
+      "fees_extracted_sat": 149472
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": -46838,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 8,
+    "finished_at": "2026-09-03T13:20:41Z",
+    "duration_s": 29.39,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "fail",
+        "duration_s": 6.84,
+        "db_ms": 639.9,
+        "detail": {
+          "sends": 30,
+          "passed": 27,
+          "undelivered": 0,
+          "failed": 3,
+          "p50_s": 1.808,
+          "max_s": 3.062,
+          "total_amount_sat": 1088712
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 20.95,
+        "db_ms": 170.3,
+        "detail": {
+          "clients": 10,
+          "passed": 9,
+          "skipped": 1,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 18,
+          "p50_s": 14.672,
+          "max_s": 19.180
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 314,
+      "operator_pg_bytes": 15645719,
+      "clients_sqlite_bytes": 116598360,
+      "client01_sqlite_bytes": 6691272,
+      "operator_mem": {
+        "mem_bytes": 53235712,
+        "mem_peak_bytes": 73863168
+      },
+      "client01_mem": {
+        "mem_bytes": 65003520,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 373,
+      "client01_goroutines": 308
+    },
+    "delta": {
+      "operator_pg_bytes": 65536,
+      "clients_sqlite_bytes": 11390592
+    },
+    "capital": {
+      "deployed_sat": 74815275,
+      "spendable_sat": 19871198,
+      "live_vtxo_sat": 19824360,
+      "claims_sat": 19688220,
+      "wallet_confirmed_sat": 1545000653,
+      "fees_extracted_sat": 175640
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": -46838,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 9,
+    "finished_at": "2026-09-03T13:21:11Z",
+    "duration_s": 10.07,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "fail",
+        "duration_s": 6.21,
+        "db_ms": 613.7,
+        "detail": {
+          "sends": 30,
+          "passed": 27,
+          "undelivered": 0,
+          "failed": 3,
+          "p50_s": 1.818,
+          "max_s": 2.477,
+          "total_amount_sat": 1154511
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 2.23,
+        "db_ms": 2.3,
+        "detail": {
+          "clients": 10,
+          "passed": 0,
+          "skipped": 10,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 0,
+          "p50_s": null,
+          "max_s": null
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 0,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 332,
+      "operator_pg_bytes": 16333847,
+      "clients_sqlite_bytes": 128320400,
+      "client01_sqlite_bytes": 6769096,
+      "operator_mem": {
+        "mem_bytes": 60350464,
+        "mem_peak_bytes": 73863168
+      },
+      "client01_mem": {
+        "mem_bytes": 69955584,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 371,
+      "client01_goroutines": 346
+    },
+    "delta": {
+      "operator_pg_bytes": 679936,
+      "clients_sqlite_bytes": 11235880
+    },
+    "capital": {
+      "deployed_sat": 74815275,
+      "spendable_sat": 19824360,
+      "live_vtxo_sat": 19824360,
+      "claims_sat": 19688220,
+      "wallet_confirmed_sat": 1545000653,
+      "fees_extracted_sat": 175640
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 10,
+    "finished_at": "2026-09-03T13:22:01Z",
+    "duration_s": 31.33,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 8.05,
+        "db_ms": 724.7,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "undelivered": 0,
+          "failed": 0,
+          "p50_s": 1.867,
+          "max_s": 3.067,
+          "total_amount_sat": 1231003
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 21.62,
+        "db_ms": 188.9,
+        "detail": {
+          "clients": 10,
+          "passed": 10,
+          "skipped": 0,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 18,
+          "p50_s": 15.720,
+          "max_s": 19.497
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 354,
+      "operator_pg_bytes": 16964631,
+      "clients_sqlite_bytes": 146295808,
+      "client01_sqlite_bytes": 6871496,
+      "operator_mem": {
+        "mem_bytes": 54984704,
+        "mem_peak_bytes": 75673600
+      },
+      "client01_mem": {
+        "mem_bytes": 70254592,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 381,
+      "client01_goroutines": 372
+    },
+    "delta": {
+      "operator_pg_bytes": 630784,
+      "clients_sqlite_bytes": 17851808
+    },
+    "capital": {
+      "deployed_sat": 81682954,
+      "spendable_sat": 19798072,
+      "live_vtxo_sat": 19798072,
+      "claims_sat": 19635644,
+      "wallet_confirmed_sat": 1538095198,
+      "fees_extracted_sat": 201928
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 11,
+    "finished_at": "2026-09-03T13:22:50Z",
+    "duration_s": 29.41,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 7.02,
+        "db_ms": 720.6,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "undelivered": 0,
+          "failed": 0,
+          "p50_s": 1.872,
+          "max_s": 2.577,
+          "total_amount_sat": 1175357
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 20.75,
+        "db_ms": 55.2,
+        "detail": {
+          "clients": 10,
+          "passed": 3,
+          "skipped": 7,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 3,
+          "p50_s": 18.482,
+          "max_s": 19.885
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 377,
+      "operator_pg_bytes": 16374807,
+      "clients_sqlite_bytes": 160759560,
+      "client01_sqlite_bytes": 6994376,
+      "operator_mem": {
+        "mem_bytes": 55922688,
+        "mem_peak_bytes": 75673600
+      },
+      "client01_mem": {
+        "mem_bytes": 73334784,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 392,
+      "client01_goroutines": 400
+    },
+    "delta": {
+      "operator_pg_bytes": -589824,
+      "clients_sqlite_bytes": 14188024
+    },
+    "capital": {
+      "deployed_sat": 82679893,
+      "spendable_sat": 19789820,
+      "live_vtxo_sat": 19789820,
+      "claims_sat": 19619140,
+      "wallet_confirmed_sat": 1537083469,
+      "fees_extracted_sat": 210180
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 12,
+    "finished_at": "2026-09-03T13:23:39Z",
+    "duration_s": 30.09,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 7.57,
+        "db_ms": 706.2,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "undelivered": 0,
+          "failed": 0,
+          "p50_s": 1.254,
+          "max_s": 3.132,
+          "total_amount_sat": 1217851
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 20.87,
+        "db_ms": 183.0,
+        "detail": {
+          "clients": 10,
+          "passed": 10,
+          "skipped": 0,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 18,
+          "p50_s": 17.031,
+          "max_s": 18.576
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 399,
+      "operator_pg_bytes": 16555031,
+      "clients_sqlite_bytes": 175569728,
+      "client01_sqlite_bytes": 7039432,
+      "operator_mem": {
+        "mem_bytes": 57864192,
+        "mem_peak_bytes": 75673600
+      },
+      "client01_mem": {
+        "mem_bytes": 71372800,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 409,
+      "client01_goroutines": 408
+    },
+    "delta": {
+      "operator_pg_bytes": 180224,
+      "clients_sqlite_bytes": 14414984
+    },
+    "capital": {
+      "deployed_sat": 87425801,
+      "spendable_sat": 19765513,
+      "live_vtxo_sat": 19765513,
+      "claims_sat": 19570526,
+      "wallet_confirmed_sat": 1532301766,
+      "fees_extracted_sat": 234487
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 13,
+    "finished_at": "2026-09-03T13:24:27Z",
+    "duration_s": 27.71,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 7.04,
+        "db_ms": 685.0,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "undelivered": 0,
+          "failed": 0,
+          "p50_s": 1.879,
+          "max_s": 2.536,
+          "total_amount_sat": 1351917
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 19.00,
+        "db_ms": 47.7,
+        "detail": {
+          "clients": 10,
+          "passed": 2,
+          "skipped": 8,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 2,
+          "p50_s": 17.596,
+          "max_s": 17.596
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 422,
+      "operator_pg_bytes": 16890903,
+      "clients_sqlite_bytes": 194205056,
+      "client01_sqlite_bytes": 7096776,
+      "operator_mem": {
+        "mem_bytes": 57049088,
+        "mem_peak_bytes": 76509184
+      },
+      "client01_mem": {
+        "mem_bytes": 73408512,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 420,
+      "client01_goroutines": 445
+    },
+    "delta": {
+      "operator_pg_bytes": 335872,
+      "clients_sqlite_bytes": 18359600
+    },
+    "capital": {
+      "deployed_sat": 88116464,
+      "spendable_sat": 19758666,
+      "live_vtxo_sat": 19758666,
+      "claims_sat": 19556832,
+      "wallet_confirmed_sat": 1531598048,
+      "fees_extracted_sat": 241334
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 14,
+    "finished_at": "2026-09-03T13:25:16Z",
+    "duration_s": 29.12,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 5.75,
+        "db_ms": 737.6,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "undelivered": 0,
+          "failed": 0,
+          "p50_s": 1.307,
+          "max_s": 1.976,
+          "total_amount_sat": 1271061
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 21.71,
+        "db_ms": 188.3,
+        "detail": {
+          "clients": 10,
+          "passed": 10,
+          "skipped": 0,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 18,
+          "p50_s": 15.822,
+          "max_s": 19.628
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 444,
+      "operator_pg_bytes": 18512919,
+      "clients_sqlite_bytes": 210577136,
+      "client01_sqlite_bytes": 7211464,
+      "operator_mem": {
+        "mem_bytes": 56225792,
+        "mem_peak_bytes": 76509184
+      },
+      "client01_mem": {
+        "mem_bytes": 71213056,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 437,
+      "client01_goroutines": 472
+    },
+    "delta": {
+      "operator_pg_bytes": 1613824,
+      "clients_sqlite_bytes": 15552824
+    },
+    "capital": {
+      "deployed_sat": 90487125,
+      "spendable_sat": 19736544,
+      "live_vtxo_sat": 19736544,
+      "claims_sat": 19512588,
+      "wallet_confirmed_sat": 1529193777,
+      "fees_extracted_sat": 263456
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
+  },
+  {
+    "epoch": 15,
+    "finished_at": "2026-09-03T13:26:05Z",
+    "duration_s": 28.85,
+    "versions": {
+      "lumosd": "0.1.99",
+      "waved": "0.1.99"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "pass",
+        "duration_s": 8.26,
+        "db_ms": 763.2,
+        "detail": {
+          "sends": 30,
+          "passed": 30,
+          "undelivered": 0,
+          "failed": 0,
+          "p50_s": 1.877,
+          "max_s": 3.168,
+          "total_amount_sat": 1302807
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "pass",
+        "duration_s": 18.93,
+        "db_ms": 46.8,
+        "detail": {
+          "clients": 10,
+          "passed": 2,
+          "skipped": 8,
+          "quote_rejected": 0,
+          "failed": 0,
+          "vtxos_refreshed": 2,
+          "p50_s": 18.267,
+          "max_s": 18.267
+        }
+      }
+    ],
+    "boards": [],
+    "rounds": {
+      "rounds_confirmed": 1,
+      "rounds_failed": 0,
+      "batches_expired": 0,
+      "sweeps_broadcast": 0,
+      "batch_sweeps": 0
+    },
+    "after": {
+      "block_height": 467,
+      "operator_pg_bytes": 18463767,
+      "clients_sqlite_bytes": 223202624,
+      "client01_sqlite_bytes": 7326152,
+      "operator_mem": {
+        "mem_bytes": 58744832,
+        "mem_peak_bytes": 76853248
+      },
+      "client01_mem": {
+        "mem_bytes": 77508608,
+        "mem_peak_bytes": 369332224
+      },
+      "operator_goroutines": 448,
+      "client01_goroutines": 530
+    },
+    "delta": {
+      "operator_pg_bytes": 1024000,
+      "clients_sqlite_bytes": 12283528
+    },
+    "capital": {
+      "deployed_sat": 90908829,
+      "spendable_sat": 19729944,
+      "live_vtxo_sat": 19729944,
+      "claims_sat": 19499388,
+      "wallet_confirmed_sat": 1528759265,
+      "fees_extracted_sat": 270056
+    },
+    "capital_check": {
+      "deposited_cum_sat": 20000000,
+      "residual_sat": 0,
+      "invisible_sat": 0,
+      "expired_sat": 0
+    }
   }
 ]

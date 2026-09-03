@@ -13,11 +13,8 @@
 # shell (the case aggregates).
 one_oor_send() {
   local from=$1 to=$2 amount=$3 out=$4
-  local t0 t1 status pk err="" sid sstat recv_before recv_after
+  local t0 t1 status pk err="" sid sstat
   t0=$(date +%s.%N)
-  # Receiver balance before, so delivery can be verified rather than
-  # assumed from the sender's view.
-  recv_before=$(ark_balance "$to")
   # A busy receiver can miss the default 30s RPC deadline; give it a real
   # one and one retry before declaring the receiver unresponsive.
   pk=$(wavecli "$to" ark oor receive --timeout 60s 2>/dev/null \
@@ -53,18 +50,23 @@ one_oor_send() {
         sleep 0.5
       done
 
-      # The sender reaching COMPLETED does not mean the recipient got it.
-      # An incoming transfer can be dropped while the recipient has its own
-      # outgoing session in flight, leaving the value live at the operator
-      # and invisible to its owner. Poll the receiver for the credit; if it
-      # never lands the payment is undelivered, not a pass.
-      if [[ "$status" == pass && -n "$recv_before" ]]; then
-        local ddl=$(( $(date +%s) + 45 )) delivered=0
+      # The sender reaching COMPLETED does not mean the recipient got it:
+      # an incoming transfer can be dropped, leaving the value live at the
+      # operator and invisible to its owner. Verify against the RECEIVER's
+      # own view of the same session id. An earlier version compared the
+      # receiver's balance before and after, which was wrong: receivers
+      # send concurrently in the same wave, so their balance often falls
+      # even on a delivered payment, and it flagged 24 healthy payments as
+      # undelivered while invisible_sat stayed at zero.
+      if [[ "$status" == pass ]]; then
+        local ddl=$(( $(date +%s) + 45 )) delivered=0 rstat
         while (( $(date +%s) < ddl )); do
-          recv_after=$(ark_balance "$to")
-          if [[ -n "$recv_after" ]] && (( recv_after > recv_before )); then
-            delivered=1; break
-          fi
+          rstat=$(wavecli "$to" ark oor get --session-id "$sid" 2>/dev/null \
+            | jq -r '.session.status // empty')
+          case "$rstat" in
+            *COMPLETED*) delivered=1; break ;;
+            *FAILED*)    break ;;
+          esac
           sleep 1
         done
         (( delivered )) || status=undelivered

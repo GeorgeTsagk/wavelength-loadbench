@@ -35,3 +35,14 @@ Detected by the capital-conservation gauge: invisible_sat stepped 0 ->
 (deposited == live + in_flight + expired + fees) held exactly at 0
 throughout, so no sats left the system: they are simply invisible to their
 owner.
+
+## v4 series result (60 epochs on masters, 2026-09-03)
+
+Sender change loss recurred twice more in the clean run: invisible_sat
+stepped to 36,706 around epoch 50 and 102,383 by epoch 60. Rare (3 events
+in 1,800 payments) but permanent per event.
+
+Still present, self-healing: the stale live-vtxo set. wb-client02 kept
+selecting operator-SPENT vtxos as inputs, 47 rejected sends across epochs
+7-9 and 37-49, then recovered on its own. On the release tags the same
+condition was permanent and jammed the client for the rest of the run.

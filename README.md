@@ -41,10 +41,16 @@ the snapshot page.
 
 ## Versions under test
 
-Pinned release tags plus one local commit each that adds an exact-bracket
-CPU profile endpoint (`bench/patch-pprof.sh`): lumos v0.1.0 and wavelength
-v0.1.1. Repinning is deliberate and noted via `SCHEMA_NOTE` in
-`bench/config.env`.
+Currently the **upstream masters** of both repos rather than release tags:
+lumos `master@efa4deb5` and wavelength `main@e03e9d7c`, each plus one local
+commit that adds an exact-bracket CPU profile endpoint
+(`bench/patch-pprof.sh`). lumos master pins exactly that wavelength commit
+as its client submodule, so the pair is upstream-consistent. Repinning is
+deliberate and noted via `SCHEMA_NOTE` in `bench/config.env`, which also
+records why each series was restarted.
+
+Earlier series ran the release tags v0.1.0 and v0.1.1. The current series
+exists to check whether findings from those runs are already fixed upstream.
 
 **The operator repo (lightninglabs/lumos) is private.** This repository
 carries only the harness, the epoch records and the rendered site. Operator

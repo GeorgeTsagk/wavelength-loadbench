@@ -5891,5 +5891,110 @@
       "invisible_sat": 2888228,
       "expired_sat": 6148379
     }
+  },
+  {
+    "epoch": 71,
+    "finished_at": "2026-09-03T00:36:43Z",
+    "duration_s": 493.27,
+    "versions": {
+      "lumosd": "0.1.0",
+      "waved": "0.1.1"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "fail",
+        "duration_s": 62.66,
+        "db_ms": 1816.4,
+        "detail": {
+          "sends": 30,
+          "passed": 26,
+          "undelivered": 3,
+          "failed": 4,
+          "p50_s": 4.376,
+          "max_s": 7.703,
+          "total_amount_sat": 1070527
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "fail",
+        "duration_s": 427.60,
+        "db_ms": 2722.0,
+        "detail": {
+          "clients": 10,
+          "passed": 0,
+          "skipped": 2,
+          "quote_rejected": 0,
+          "failed": 8,
+          "vtxos_refreshed": 0,
+          "p50_s": null,
+          "max_s": null
+        }
+      }
+    ],
+    "boards": [
+      {
+        "node": "wb-client01",
+        "status": "pass"
+      },
+      {
+        "node": "wb-client02",
+        "status": "timeout"
+      },
+      {
+        "node": "wb-client07",
+        "status": "timeout"
+      },
+      {
+        "node": "wb-client08",
+        "status": "pass"
+      },
+      {
+        "node": "wb-client10",
+        "status": "pass"
+      }
+    ],
+    "rounds": {
+      "rounds_confirmed": 3,
+      "rounds_failed": 19,
+      "batches_expired": 26,
+      "sweeps_broadcast": 13,
+      "batch_sweeps": 13
+    },
+    "after": {
+      "block_height": 4229,
+      "operator_pg_bytes": 57359383,
+      "clients_sqlite_bytes": 2277250056,
+      "client01_sqlite_bytes": 155606528,
+      "operator_mem": {
+        "mem_bytes": 209440768,
+        "mem_peak_bytes": 250929152
+      },
+      "client01_mem": {
+        "mem_bytes": 789598208,
+        "mem_peak_bytes": 1158377472
+      },
+      "operator_goroutines": 4703,
+      "client01_goroutines": 2734
+    },
+    "delta": {
+      "operator_pg_bytes": 425984,
+      "clients_sqlite_bytes": 142408360
+    },
+    "capital": {
+      "deployed_sat": 157987257,
+      "spendable_sat": 13770728,
+      "live_vtxo_sat": 16492075,
+      "claims_sat": 14394851,
+      "wallet_confirmed_sat": 1246840085,
+      "fees_extracted_sat": 8831893
+    },
+    "capital_check": {
+      "deposited_cum_sat": 32000000,
+      "residual_sat": 0,
+      "invisible_sat": 2721347,
+      "expired_sat": 6642331
+    }
   }
 ]

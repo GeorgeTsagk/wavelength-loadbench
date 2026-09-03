@@ -1,6 +1,6 @@
 {
-  "epoch": 72,
-  "finished_at": "2026-09-03T03:42:19Z",
+  "epoch": 73,
+  "finished_at": "2026-09-03T06:41:50Z",
   "versions": {
     "lumosd": "0.1.0",
     "waved": "0.1.1",
@@ -8,9 +8,9 @@
     "wavelength_rev": "dc4a6637"
   },
   "rounds": {
-    "rounds_confirmed": 7,
+    "rounds_confirmed": 1,
     "rounds_failed": 6,
-    "batches_expired": 18,
+    "batches_expired": 16,
     "sweeps_broadcast": 8,
     "batch_sweeps": 8
   },
@@ -18,46 +18,51 @@
     {
       "node": "wb-client02",
       "status": "timeout",
-      "duration_s": 305.4
+      "duration_s": 303.5
     },
     {
       "node": "wb-client03",
       "status": "timeout",
-      "duration_s": 304.2
+      "duration_s": 302.7
     },
     {
       "node": "wb-client07",
       "status": "timeout",
-      "duration_s": 307.0
+      "duration_s": 304.3
+    },
+    {
+      "node": "wb-client09",
+      "status": "pass",
+      "duration_s": 20.2
     }
   ],
   "cases": [
     {
       "name": "send",
       "status": "fail",
-      "duration_s": 146.03,
-      "db_ms": 2296.4,
+      "duration_s": 100.94,
+      "db_ms": 2021.6,
       "detail": {
         "sends": 30,
-        "passed": 24,
-        "undelivered": 6,
-        "failed": 6,
-        "p50_s": 4.793,
-        "max_s": 6.470,
-        "total_amount_sat": 1003551
+        "passed": 28,
+        "undelivered": 2,
+        "failed": 2,
+        "p50_s": 4.717,
+        "max_s": 5.878,
+        "total_amount_sat": 1201096
       }
     },
     {
       "name": "refresh",
       "status": "fail",
-      "duration_s": 427.74,
-      "db_ms": 6155.5,
+      "duration_s": 427.02,
+      "db_ms": 2590.3,
       "detail": {
         "clients": 10,
         "passed": 0,
-        "skipped": 0,
+        "skipped": 5,
         "quote_rejected": 0,
-        "failed": 10,
+        "failed": 5,
         "vtxos_refreshed": 0,
         "p50_s": null,
         "max_s": null
@@ -66,11 +71,11 @@
   ],
   "clients": {
     "wb-client01": {
-      "balance_sat": 2324644,
-      "live_vtxos": 37,
-      "goroutines": 2832,
-      "heap_bytes": 642744320,
-      "sqlite_bytes": 197238272,
+      "balance_sat": 2266472,
+      "live_vtxos": 29,
+      "goroutines": 2994,
+      "heap_bytes": 904740864,
+      "sqlite_bytes": 255995392,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -78,11 +83,11 @@
       }
     },
     "wb-client02": {
-      "balance_sat": 124055,
+      "balance_sat": 134001,
       "live_vtxos": 8,
-      "goroutines": 3205,
-      "heap_bytes": 1507303424,
-      "sqlite_bytes": 346839976,
+      "goroutines": 3300,
+      "heap_bytes": 1709948928,
+      "sqlite_bytes": 422607784,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -90,11 +95,11 @@
       }
     },
     "wb-client03": {
-      "balance_sat": 124091,
-      "live_vtxos": 19,
-      "goroutines": 3667,
-      "heap_bytes": 1578254336,
-      "sqlite_bytes": 358886680,
+      "balance_sat": 115489,
+      "live_vtxos": 13,
+      "goroutines": 3759,
+      "heap_bytes": 2174885888,
+      "sqlite_bytes": 419962136,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -102,11 +107,11 @@
       }
     },
     "wb-client04": {
-      "balance_sat": 2068596,
-      "live_vtxos": 33,
-      "goroutines": 2386,
-      "heap_bytes": 395526144,
-      "sqlite_bytes": 141780224,
+      "balance_sat": 1969237,
+      "live_vtxos": 34,
+      "goroutines": 2445,
+      "heap_bytes": 536231936,
+      "sqlite_bytes": 165496064,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -114,11 +119,11 @@
       }
     },
     "wb-client05": {
-      "balance_sat": 1648702,
-      "live_vtxos": 39,
-      "goroutines": 2346,
-      "heap_bytes": 646168576,
-      "sqlite_bytes": 215433448,
+      "balance_sat": 1709870,
+      "live_vtxos": 43,
+      "goroutines": 2452,
+      "heap_bytes": 1087520768,
+      "sqlite_bytes": 254255336,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -126,11 +131,11 @@
       }
     },
     "wb-client06": {
-      "balance_sat": 2032317,
+      "balance_sat": 2014905,
       "live_vtxos": 28,
-      "goroutines": 2898,
-      "heap_bytes": 1384579072,
-      "sqlite_bytes": 361310048,
+      "goroutines": 3040,
+      "heap_bytes": 1489747968,
+      "sqlite_bytes": 420309776,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -138,11 +143,11 @@
       }
     },
     "wb-client07": {
-      "balance_sat": 177196,
-      "live_vtxos": 9,
-      "goroutines": 3558,
-      "heap_bytes": 2574557184,
-      "sqlite_bytes": 550362608,
+      "balance_sat": 39265,
+      "live_vtxos": 5,
+      "goroutines": 3621,
+      "heap_bytes": 3276685312,
+      "sqlite_bytes": 628157936,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -150,11 +155,11 @@
       }
     },
     "wb-client08": {
-      "balance_sat": 2308801,
-      "live_vtxos": 45,
-      "goroutines": 2513,
-      "heap_bytes": 530161664,
-      "sqlite_bytes": 155166392,
+      "balance_sat": 2304867,
+      "live_vtxos": 38,
+      "goroutines": 2808,
+      "heap_bytes": 588447744,
+      "sqlite_bytes": 202001072,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -162,11 +167,11 @@
       }
     },
     "wb-client09": {
-      "balance_sat": 292787,
-      "live_vtxos": 34,
-      "goroutines": 3149,
-      "heap_bytes": 1219362816,
-      "sqlite_bytes": 329719464,
+      "balance_sat": 2078703,
+      "live_vtxos": 27,
+      "goroutines": 3307,
+      "heap_bytes": 1141964800,
+      "sqlite_bytes": 389082792,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -174,11 +179,11 @@
       }
     },
     "wb-client10": {
-      "balance_sat": 1809832,
+      "balance_sat": 1699147,
       "live_vtxos": 12,
-      "goroutines": 2807,
-      "heap_bytes": 764452864,
-      "sqlite_bytes": 275358168,
+      "goroutines": 2824,
+      "heap_bytes": 1032732672,
+      "sqlite_bytes": 333103576,
       "wal": {
         "mx_frame": 0,
         "n_backfill": 0,
@@ -187,8 +192,8 @@
     }
   },
   "operator": {
-    "pg_total": 58637335,
-    "goroutines": 4848,
-    "heap_bytes": 146505728
+    "pg_total": 59546647,
+    "goroutines": 4980,
+    "heap_bytes": 150626304
   }
 }

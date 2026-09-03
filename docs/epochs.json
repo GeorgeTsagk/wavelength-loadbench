@@ -5996,5 +5996,102 @@
       "invisible_sat": 2721347,
       "expired_sat": 6642331
     }
+  },
+  {
+    "epoch": 72,
+    "finished_at": "2026-09-03T03:42:19Z",
+    "duration_s": 576.84,
+    "versions": {
+      "lumosd": "0.1.0",
+      "waved": "0.1.1"
+    },
+    "cases": [
+      {
+        "name": "send",
+        "status": "fail",
+        "duration_s": 146.03,
+        "db_ms": 2296.4,
+        "detail": {
+          "sends": 30,
+          "passed": 24,
+          "undelivered": 6,
+          "failed": 6,
+          "p50_s": 4.793,
+          "max_s": 6.470,
+          "total_amount_sat": 1003551
+        }
+      },
+      {
+        "name": "refresh",
+        "status": "fail",
+        "duration_s": 427.74,
+        "db_ms": 6155.5,
+        "detail": {
+          "clients": 10,
+          "passed": 0,
+          "skipped": 0,
+          "quote_rejected": 0,
+          "failed": 10,
+          "vtxos_refreshed": 0,
+          "p50_s": null,
+          "max_s": null
+        }
+      }
+    ],
+    "boards": [
+      {
+        "node": "wb-client02",
+        "status": "timeout"
+      },
+      {
+        "node": "wb-client03",
+        "status": "timeout"
+      },
+      {
+        "node": "wb-client07",
+        "status": "timeout"
+      }
+    ],
+    "rounds": {
+      "rounds_confirmed": 7,
+      "rounds_failed": 6,
+      "batches_expired": 18,
+      "sweeps_broadcast": 8,
+      "batch_sweeps": 8
+    },
+    "after": {
+      "block_height": 4630,
+      "operator_pg_bytes": 58637335,
+      "clients_sqlite_bytes": 2932095280,
+      "client01_sqlite_bytes": 197238272,
+      "operator_mem": {
+        "mem_bytes": 220737536,
+        "mem_peak_bytes": 272707584
+      },
+      "client01_mem": {
+        "mem_bytes": 1113845760,
+        "mem_peak_bytes": 1682583552
+      },
+      "operator_goroutines": 4848,
+      "client01_goroutines": 2832
+    },
+    "delta": {
+      "operator_pg_bytes": 1089536,
+      "clients_sqlite_bytes": 176960640
+    },
+    "capital": {
+      "deployed_sat": 169102082,
+      "spendable_sat": 12911021,
+      "live_vtxo_sat": 15833801,
+      "claims_sat": 13630651,
+      "wallet_confirmed_sat": 1603287593,
+      "fees_extracted_sat": 9213993
+    },
+    "capital_check": {
+      "deposited_cum_sat": 32000000,
+      "residual_sat": 0,
+      "invisible_sat": 2922780,
+      "expired_sat": 6952206
+    }
   }
 ]

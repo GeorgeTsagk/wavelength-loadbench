@@ -65,7 +65,7 @@ services:
 
   # The operator's on-chain wallet. Clients do not run lnd.
   wb-lnd:
-    image: mirror.gcr.io/lightninglabs/lnd:daily-testing-20260701
+    image: lnd:wavebench
     container_name: wb-lnd
     restart: unless-stopped
     depends_on:

@@ -238,7 +238,9 @@
       ("insufficient_residual") count in the epoch detail as their own
       buckets, not as failures, and are excluded from the percentiles.
       Epochs 1-13 refreshed every client's whole fleet every epoch, which is
-      why their round times and fee drain run far hotter.</p>
+      why their round times and fee drain run far hotter. Epochs where
+      every client skips are left out of the timings: nothing was due, so
+      there is no round to time.</p>
     <div class="legend" id="lg-ref"></div>
     <div class="plot" id="p-ref"><div class="tip" id="t-ref"></div></div>
   </section>
@@ -296,6 +298,9 @@
       balances cannot close these books themselves: a vtxo locked in a
       queued refresh is counted in both a client's confirmed balance and its
       pending-out.</p>
+    <p class="note"><b>Reading a flat line here.</b> All three series
+      sitting on one value is the healthy result, not a missing chart: in
+      this series they are pinned at zero for every epoch.</p>
     <div class="legend" id="lg-cons"></div>
     <div class="plot" id="p-cons"><div class="tip" id="t-cons"></div></div>
   </section>
@@ -442,7 +447,13 @@ function lineChart(host, tip, legendHost, series, fmt) {
   const xs = drawn.flatMap(s => s.points.map(p => p[0]));
   const ys = drawn.flatMap(s => s.points.map(p => p[1]));
   const x0 = Math.min(...xs), x1 = Math.max(...xs);
-  const y1 = Math.max(...ys, 1e-9), y0 = Math.min(0, ...ys);
+  // A series that never moves (conservation residual pinned at zero, say)
+  // would otherwise be drawn flat along the x-axis and read as an empty
+  // chart, which is the opposite of what a flat zero means here. Give a
+  // constant series a real range so the line sits inside the plot.
+  const flat = Math.max(...ys) === Math.min(...ys);
+  const y1 = flat ? Math.max(...ys) + 1 : Math.max(...ys, 1e-9);
+  const y0 = flat ? Math.min(...ys) - 1 : Math.min(0, ...ys);
   const px = v => m.l + (x1 === x0 ? 0 : (v - x0) / (x1 - x0)) * (W - m.l - m.r);
   const py = v => H - m.b - (y1 === y0 ? 0 : (v - y0) / (y1 - y0)) * (H - m.t - m.b);
 
@@ -602,11 +613,19 @@ function render(data) {
     cell('boards / sweeps', `${fmtInt(totalBoards)} / ${fmtInt(totalSweeps)}`,
       'top-ups done, batches swept');
 
+  // A case that did no work is not a faster case, it is a different
+  // event. Refresh skips every client in the epochs where nothing is near
+  // batch expiry or deep enough in OOR lineage, and its ~2s of polling
+  // plotted next to a ~20s real round reads as a sawtooth in the timings
+  // when it is really an alternation between working and not working.
+  // Plot only epochs where the case actually ran something.
+  const didWork = f => (f.detail?.passed ?? 1) > 0;
   const dur = CASES.map(c => ({
     name: c.key, label: c.key, color: c.color, what: c.what,
     points: data.flatMap(e => {
       const f = caseOf(e, c.key);
-      return f && f.status === 'pass' ? [[e.epoch, f.duration_s]] : [];
+      return f && f.status === 'pass' && didWork(f)
+        ? [[e.epoch, f.duration_s]] : [];
     }),
   }));
   lineChart(document.getElementById('p-dur'), document.getElementById('t-dur'),

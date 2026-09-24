@@ -52,18 +52,44 @@ wait_electrs_synced() {
 # Mine n blocks and wait for electrs to serve them.
 mine_synced() { mine "${1:-1}"; wait_electrs_synced; }
 
-# Poll a condition, mining one block between attempts. Rounds and boards
-# need confirmations to progress, and on this network confirmations only
-# happen when we produce them. Usage: mine_until <timeout_s> <cmd...>
+# Poll a condition, mining one block between attempts, up to a block
+# budget. Rounds and boards need confirmations to progress, and on this
+# network confirmations only happen when we produce them. The budget is
+# not cosmetic: a boarding utxo is only admissible inside a window (exit
+# delay 512 minus a 48 safety margin = 464 confirmations), so an
+# unbudgeted poll that spins for its whole timeout at a block every two
+# seconds ages the very deposit it is waiting on straight out of that
+# window, turning a slow board into a permanently unboardable one. It
+# also wrecks the epoch-to-blocks pacing the batch-expiry model rests on.
+# Once the budget is spent the condition is still polled to the timeout,
+# just without mining.
+# Usage: mine_until <timeout_s> <max_blocks> <cmd...>
 mine_until() {
-  local timeout=$1; shift
+  local timeout=$1 budget=$2; shift 2
   local start; start=$(date +%s)
   while true; do
     "$@" && return 0
     (( $(date +%s) - start > timeout )) && return 1
-    mine_synced 1
+    if (( budget > 0 )); then
+      mine_synced 1
+      (( budget-- ))
+    fi
     sleep 2
   done
+}
+
+# Wait for a client daemon to come back after a restart: getinfo answers
+# before the wallet has auto-unlocked, so the wallet_state field is what
+# decides, not the RPC being reachable.
+wait_client_ready() {
+  local n=$1 timeout=${2:-60} deadline
+  deadline=$(( $(date +%s) + timeout ))
+  while (( $(date +%s) < deadline )); do
+    [[ "$(wavecli "$n" getinfo 2>/dev/null | jq -r '.wallet_state // empty')" \
+       == *READY* ]] && return 0
+    sleep 2
+  done
+  return 1
 }
 
 # Offchain (ark) confirmed balance of one client, in sat. Prints nothing on

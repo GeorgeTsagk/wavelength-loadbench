@@ -219,6 +219,9 @@ case_refresh() {
   done
 
   local deadline=$(( $(date +%s) + REFRESH_JOIN_TIMEOUT + 300 ))
+  # Same block budget reasoning as mine_until: a refresh that hangs must
+  # not mine the chain forward for five straight minutes.
+  local refresh_block_budget=40
   while :; do
     local waiting=0
     for n in $CLIENTS; do
@@ -233,7 +236,10 @@ case_refresh() {
       log "  refresh case deadline reached, abandoning wait"
       break
     fi
-    mine_synced 1 >/dev/null 2>&1 || true
+    if (( refresh_block_budget > 0 )); then
+      mine_synced 1 >/dev/null 2>&1 || true
+      (( refresh_block_budget-- ))
+    fi
     sleep 2
   done
 
@@ -301,10 +307,24 @@ ensure_boarded() {
       # itself once the funding tx confirms, so the only work left is to
       # mine until the offchain balance reflects it. `ark board` fires the
       # same path as a belt-and-braces trigger.
-      mine_synced 1
+      # lumos requires minboardingconfirmations (6 since master@99a05392,
+      # previously shallower) before a boarding utxo may join a round. A
+      # join submitted shallower than that is rejected, and the client
+      # then keeps the outpoint marked in flight and refuses to re-offer
+      # it ("Board trigger redundant; all confirmed boarding outpoints
+      # already in flight"), so the deposit is stuck for the life of the
+      # process no matter how deep it later gets. Bury the funding tx past
+      # the minimum BEFORE boarding, and if it still does not land, bounce
+      # the daemon once: a restart is the only thing that clears the
+      # in-flight marker and lets the join be re-sent.
+      mine_synced 8
       wavecli "$n" ark board --timeout 120s >/dev/null 2>&1 || true
-      if ! mine_until 300 board_done "$n" "$bal"; then
-        status=timeout
+      if ! mine_until 240 40 board_done "$n" "$bal"; then
+        log "  board of $n did not land, restarting daemon and retrying"
+        docker restart "$n" >/dev/null 2>&1 || true
+        wait_client_ready "$n" 60 || true
+        wavecli "$n" ark board --timeout 120s >/dev/null 2>&1 || true
+        mine_until 240 40 board_done "$n" "$bal" || status=timeout
       fi
     fi
     t1=$(date +%s.%N)
@@ -328,3 +348,4 @@ board_done() {
   now=$(ark_balance "$n")
   [[ -n "$now" ]] && (( now > before ))
 }
+

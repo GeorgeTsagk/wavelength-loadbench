@@ -132,7 +132,7 @@ clients_settled() {
       <<<"$b" >/dev/null || return 1
   done
 }
-if ! mine_until 90 clients_settled; then
+if ! mine_until 90 20 clients_settled; then
   log "pending transfers did not settle within 90s, snapshotting anyway"
 fi
 
